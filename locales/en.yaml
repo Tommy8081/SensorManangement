@@ -1,91 +1,101 @@
 buttons:
-  pureLoginOut: LoginOut
-  pureLogin: Login
-  pureOpenSystemSet: Open System Configs
+  pureLoginOut: Log out
+  pureLogin: Log in
+  pureOpenSystemSet: Open system settings
   pureReload: Reload
-  pureCloseCurrentTab: Close CurrentTab
-  pureCloseLeftTabs: Close LeftTabs
-  pureCloseRightTabs: Close RightTabs
-  pureCloseOtherTabs: Close OtherTabs
-  pureCloseAllTabs: Close AllTabs
-  pureContentFullScreen: Content FullScreen
-  pureContentExitFullScreen: Content ExitFullScreen
-  pureClickCollapse: Collapse
-  pureClickExpand: Expand
+  pureCloseCurrentTab: Close current tab
+  pureCloseLeftTabs: Close left tabs
+  pureCloseRightTabs: Close right tabs
+  pureCloseOtherTabs: Close other tabs
+  pureCloseAllTabs: Close all tabs
+  pureContentFullScreen: Full screen content
+  pureContentExitFullScreen: Exit full screen content
+  pureClickCollapse: Click to collapse
+  pureClickExpand: Click to expand
   pureConfirm: Confirm
   pureSwitch: Switch
   pureClose: Close
-  pureBackTop: BackTop
-  pureOpenText: Open
-  pureCloseText: Close
+  pureBackTop: Back to top
+  pureOpenText: On
+  pureCloseText: Off
 search:
   pureTotal: Total
-  pureHistory: History
-  pureCollect: Collect
-  pureDragSort: （Drag Sort）
-  pureEmpty: Empty
-  purePlaceholder: Search Menu
+  pureHistory: Search history
+  pureCollect: Favorites
+  pureDragSort: (Draggable sorting)
+  pureEmpty: No search results
+  purePlaceholder: Search menu (supports pinyin search)
 panel:
-  pureSystemSet: System Configs
-  pureCloseSystemSet: Close System Configs
+  pureSystemSet: System settings
+  pureCloseSystemSet: Close settings
   pureClearCacheAndToLogin: Clear cache and return to login page
-  pureClearCache: Clear Cache
-  pureOverallStyle: Overall Style
+  pureClearCache: Clear cache
+  pureOverallStyle: Overall style
   pureOverallStyleLight: Light
-  pureOverallStyleLightTip: Set sail freshly and light up the comfortable work interface
+  pureOverallStyleLightTip: Fresh start, brighten up the comfortable work interface
   pureOverallStyleDark: Dark
-  pureOverallStyleDarkTip: Moonlight Overture, indulge in the tranquility and elegance of the night
+  pureOverallStyleDarkTip: Moonlight serenade, indulge in the quiet elegance of the night
   pureOverallStyleSystem: Auto
-  pureOverallStyleSystemTip: Synchronize time, the interface naturally responds to morning and dusk
-  pureThemeColor: Theme Color
-  pureLayoutModel: Layout Model
-  pureVerticalTip: The menu on the left is familiar and friendly
+  pureOverallStyleSystemTip: Sync with time, the interface naturally responds to dawn and dusk
+  pureThemeColor: Theme color
+  pureLayoutModel: Navigation mode
+  pureVerticalTip: Left menu, friendly and familiar
   pureHorizontalTip: Top menu, concise overview
-  pureMixTip: Mixed menu, flexible
-  pureStretch: Stretch Page
+  pureMixTip: Mixed menu, flexible and versatile
+  pureStretch: Page width
   pureStretchFixed: Fixed
-  pureStretchFixedTip: Compact pages make it easy to find the information you need
+  pureStretchFixedTip: Compact page, easily find the information you need
   pureStretchCustom: Custom
   pureStretchCustomTip: Minimum 1280, maximum 1600
-  pureTagsStyle: Tags Style
+  pureTagsStyle: Tab style
   pureTagsStyleSmart: Smart
-  pureTagsStyleSmartTip: Smart tags add fun and brilliance
+  pureTagsStyleSmartTip: Smart tabs, add fun and brilliance
   pureTagsStyleCard: Card
-  pureTagsStyleCardTip: Card tags for efficient browsing
+  pureTagsStyleCardTip: Card tabs, efficient browsing
   pureTagsStyleChrome: Chrome
-  pureTagsStyleChromeTip: Chrome style is classic and elegant
-  pureInterfaceDisplay: Interface Display
-  pureGreyModel: Grey Model
-  pureWeakModel: Weak Model
-  pureHiddenTags: Hidden Tags
-  pureHiddenFooter: Hidden Footer
-  pureMultiTagsCache: MultiTags Cache
+  pureTagsStyleChromeTip: Chrome style, classic and beautiful
+  pureInterfaceDisplay: Interface display
+  pureGreyModel: Grey mode
+  pureWeakModel: Weak color mode
+  pureHiddenTags: Hide tabs
+  pureHiddenFooter: Hide footer
+  pureMultiTagsCache: Persistent tabs
 menus:
   pureHome: Home
   pureLogin: Login
-  pureAbnormal: Abnormal Page
+  pureAbnormal: Abnormal page
   pureFourZeroFour: "404"
   pureFourZeroOne: "403"
   pureFive: "500"
-  purePermission: Permission Manage
-  purePermissionPage: Page Permission
-  purePermissionButton: Button Permission
-  purePermissionButtonRouter: Route return button permission
-  purePermissionButtonLogin: Login interface return button permission
+  purePermission: Permission management
+  purePermissionPage: Page permissions
+  purePermissionButton: Button permissions
+  purePermissionButtonRouter: Button permissions returned by route
+  purePermissionButtonLogin: Button permissions returned by login API
+  pureSysManagement: System management
+  pureUser: User management
+  pureRole: Role management
+  pureSystemMenu: Menu management
+  pureDept: Department management
+  pureSysMonitor: System monitoring
+  pureOnlineUser: Online users
+  pureLoginLog: Login logs
+  pureOperationLog: Operation logs
+  pureSystemLog: System logs
 status:
   pureLoad: Loading...
   pureMessage: Message
-  pureNotify: Notify
-  pureTodo: Todo
-  pureNoMessage: No Message
-  pureNoNotify: No Notify
-  pureNoTodo: No Todo
+  pureNotify: Notification
+  pureTodo: To-do
+  pureNoMessage: No messages
+  pureNoNotify: No notifications
+  pureNoTodo: No to-dos
 login:
   pureUsername: Username
   purePassword: Password
   pureLogin: Login
-  pureLoginSuccess: Login Success
-  pureLoginFail: Login Fail
+  pureLoginSuccess: Login successful
+  pureLoginFail: Login failed
   pureUsernameReg: Please enter username
   purePassWordReg: Please enter password
-  purePassWordRuleReg: The password format should be any combination of 8-18 digits
+  purePassWordRuleReg: Password format should be 8-18 characters with any two combinations of numbers, letters, and symbols
