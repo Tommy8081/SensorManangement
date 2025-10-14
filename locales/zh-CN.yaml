@@ -82,6 +82,8 @@ menus:
   pureLoginLog: 登录日志
   pureOperationLog: 操作日志
   pureSystemLog: 系统日志
+  pureSensorManage: 传感器管理
+  pureSensorList: 传感器列表
 status:
   pureLoad: 加载中...
   pureMessage: 消息
@@ -99,3 +101,97 @@ login:
   pureUsernameReg: 请输入账号
   purePassWordReg: 请输入密码
   purePassWordRuleReg: 密码格式应为8-18位数字、字母、符号的任意两种组合
+sensorManage:
+  sensorList:
+    title: 传感器列表
+    searchForm:
+      sensorName: 传感器名称
+      sensorType: 传感器类型
+      status: 状态
+      search: 搜索
+      reset: 重置
+      sensorNamePlaceholder: 请输入传感器名称
+      sensorTypePlaceholder: 请选择传感器类型
+      statusPlaceholder: 请选择状态
+      enabled: 已启用
+      disabled: 已停用
+    sensorType:
+      temperature: 温度传感器
+      humidity: 湿度传感器
+      pressure: 压力传感器
+    portType:
+      tcp: TCP/IP
+      serial: 串口
+      usb: USB
+    table:
+      sensorName: 传感器名称
+      sensorType: 传感器类型
+      portType: 连接方式
+      wsid: OPI编号
+      location: OPI位置
+      eqpid: 机台编号
+      ip: IP地址
+      stationNo: 站点编号
+      port: 端口
+      com: COM口
+      enable: 是否启用
+      lastUpdateUser: 上次更新用户
+      lastUpdateTime: 上次更新时间
+      operation: 操作
+      enabled: 启用
+      disabled: 停用
+    button:
+      add: 新增传感器
+      edit: 修改
+      delete: 删除
+    dialog:
+      addTitle: 新增传感器
+      editTitle: 修改传感器
+    form:
+      sensorName: 传感器名称
+      sensorType: 传感器类型
+      portType: 连接方式
+      enable: 是否启用
+      wsid: OPI编号
+      location: OPI位置
+      eqpid: 机台编号
+      ip: IP地址
+      stationNo: 站点编号
+      port: 端口
+      com: COM口
+      sensorNamePlaceholder: 请输入传感器名称
+      sensorTypePlaceholder: 请选择传感器类型
+      portTypePlaceholder: 请选择连接方式
+      wsidPlaceholder: 请输入OPI编号
+      locationPlaceholder: 请输入OPI位置
+      eqpidPlaceholder: 请输入机台编号
+      ipPlaceholder: 请输入IP地址
+      stationNoPlaceholder: 请输入站点编号
+      portPlaceholder: 请输入端口号
+      comPlaceholder: 请输入COM口（如：COM1）
+    rules:
+      sensorNameRequired: 传感器名称为必填项
+      sensorTypeRequired: 传感器类型为必填项
+      portTypeRequired: 连接方式为必填项
+      wsidRequired: OPI编号为必填项
+      locationRequired: OPI位置为必填项
+      eqpidRequired: 机台编号为必填项
+      ipRequired: IP地址为必填项
+      ipFormat: 请输入正确的IP地址
+      stationNoRequired: 站点编号为必填项
+      portRequired: 端口为必填项
+      portFormat: 端口必须为数字
+    message:
+      confirmDelete: 是否确认删除传感器{name}？
+      deleteSuccess: 您删除了传感器 {name}
+      addSuccess: 您新增了传感器名称为{name}的这条数据
+      editSuccess: 您修改了传感器名称为{name}的这条数据
+      enableConfirm: 确认要启用传感器{name}吗?
+      disableConfirm: 确认要停用传感器{name}吗?
+      enableSuccess: 已启用传感器 {name}
+      disableSuccess: 已停用传感器 {name}
+      systemTip: 系统提示
+      confirm: 确定
+      cancel: 取消
+      enable: 启用
+      disable: 停用

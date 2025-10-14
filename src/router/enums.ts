@@ -3,6 +3,7 @@
 const home = 0, // 平台规定只有 home 路由的 rank 才能为 0 ，所以后端在返回 rank 的时候需要从非 0 开始
   permission = 1,
   system = 2,
-  monitor = 3;
+  monitor = 3,
+  sensorManage = 8;
 
-export { home, permission, system, monitor };
+export { home, permission, system, monitor, sensorManage };

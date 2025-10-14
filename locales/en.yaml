@@ -82,6 +82,8 @@ menus:
   pureLoginLog: Login logs
   pureOperationLog: Operation logs
   pureSystemLog: System logs
+  pureSensorManage: Sensor Management
+  pureSensorList: Sensor List
 status:
   pureLoad: Loading...
   pureMessage: Message
@@ -99,3 +101,97 @@ login:
   pureUsernameReg: Please enter username
   purePassWordReg: Please enter password
   purePassWordRuleReg: Password format should be 8-18 characters with any two combinations of numbers, letters, and symbols
+sensorManage:
+  sensorList:
+    title: Sensor List
+    searchForm:
+      sensorName: Sensor Name
+      sensorType: Sensor Type
+      status: Status
+      search: Search
+      reset: Reset
+      sensorNamePlaceholder: Please enter sensor name
+      sensorTypePlaceholder: Please select sensor type
+      statusPlaceholder: Please select status
+      enabled: Enabled
+      disabled: Disabled
+    sensorType:
+      temperature: Temperature Sensor
+      humidity: Humidity Sensor
+      pressure: Pressure Sensor
+    portType:
+      tcp: TCP/IP
+      serial: Serial Port
+      usb: USB
+    table:
+      sensorName: Sensor Name
+      sensorType: Sensor Type
+      portType: Connection Type
+      wsid: OPI Number
+      location: OPI Location
+      eqpid: Equipment ID
+      ip: IP Address
+      stationNo: Station Number
+      port: Port
+      com: COM Port
+      enable: Enable
+      lastUpdateUser: Last Update User
+      lastUpdateTime: Last Update Time
+      operation: Operation
+      enabled: Enable
+      disabled: Disable
+    button:
+      add: Add Sensor
+      edit: Edit
+      delete: Delete
+    dialog:
+      addTitle: Add Sensor
+      editTitle: Edit Sensor
+    form:
+      sensorName: Sensor Name
+      sensorType: Sensor Type
+      portType: Connection Type
+      enable: Enable
+      wsid: OPI Number
+      location: OPI Location
+      eqpid: Equipment ID
+      ip: IP Address
+      stationNo: Station Number
+      port: Port
+      com: COM Port
+      sensorNamePlaceholder: Please enter sensor name
+      sensorTypePlaceholder: Please select sensor type
+      portTypePlaceholder: Please select connection type
+      wsidPlaceholder: Please enter OPI number
+      locationPlaceholder: Please enter OPI location
+      eqpidPlaceholder: Please enter equipment ID
+      ipPlaceholder: Please enter IP address
+      stationNoPlaceholder: Please enter station number
+      portPlaceholder: Please enter port number
+      comPlaceholder: Please enter COM port (e.g., COM1)
+    rules:
+      sensorNameRequired: Sensor name is required
+      sensorTypeRequired: Sensor type is required
+      portTypeRequired: Connection type is required
+      wsidRequired: OPI number is required
+      locationRequired: OPI location is required
+      eqpidRequired: Equipment ID is required
+      ipRequired: IP address is required
+      ipFormat: Please enter a valid IP address
+      stationNoRequired: Station number is required
+      portRequired: Port is required
+      portFormat: Port must be a number
+    message:
+      confirmDelete: Are you sure to delete sensor {name}?
+      deleteSuccess: You deleted sensor {name}
+      addSuccess: You added sensor {name}
+      editSuccess: You updated sensor {name}
+      enableConfirm: Are you sure to enable sensor {name}?
+      disableConfirm: Are you sure to disable sensor {name}?
+      enableSuccess: Sensor {name} enabled
+      disableSuccess: Sensor {name} disabled
+      systemTip: System Tip
+      confirm: Confirm
+      cancel: Cancel
+      enable: Enable
+      disable: Disable

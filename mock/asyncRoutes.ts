@@ -159,6 +159,27 @@ const permissionRouter = {
   ]
 };
 
+const sensorManagementRouter = {
+  path: "/sensor-manage",
+  meta: {
+    icon: "ri:sensor-line",
+    title: "menus.pureSensorManage",
+    rank: 8
+  },
+  children: [
+    {
+      path: "/sensor-manage/sensor-list",
+      name: "SensorManage",
+      component: "SensorManage/SensorListPage/index",
+      meta: {
+        icon: "ep:list",
+        title: "menus.pureSensorList",
+        roles: ["admin", "common"]
+      }
+    }
+  ]
+};
+
 export default defineFakeRoute([
   {
     url: "/get-async-routes",
@@ -166,7 +187,12 @@ export default defineFakeRoute([
     response: () => {
       return {
         success: true,
-        data: [systemManagementRouter, systemMonitorRouter, permissionRouter]
+        data: [
+          sensorManagementRouter,
+          systemManagementRouter,
+          systemMonitorRouter,
+          permissionRouter
+        ]
       };
     }
   }

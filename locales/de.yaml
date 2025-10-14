@@ -82,6 +82,8 @@ menus:
   pureLoginLog: Anmeldeprotokolle
   pureOperationLog: Bedienungsprotokolle
   pureSystemLog: Systemprotokolle
+  pureSensorManage: Sensorverwaltung
+  pureSensorList: Sensorliste
 status:
   pureLoad: Laden...
   pureMessage: Nachricht
@@ -99,3 +101,97 @@ login:
   pureUsernameReg: Bitte Benutzernamen eingeben
   purePassWordReg: Bitte Passwort eingeben
   purePassWordRuleReg: "Passwortformat: 8-18 Zeichen, Kombination aus Zahlen, Buchstaben und Symbolen"
+sensorManage:
+  sensorList:
+    title: Sensorliste
+    searchForm:
+      sensorName: Sensorname
+      sensorType: Sensortyp
+      status: Status
+      search: Suchen
+      reset: Zurücksetzen
+      sensorNamePlaceholder: Bitte Sensornamen eingeben
+      sensorTypePlaceholder: Bitte Sensortyp auswählen
+      statusPlaceholder: Bitte Status auswählen
+      enabled: Aktiviert
+      disabled: Deaktiviert
+    sensorType:
+      temperature: Temperatursensor
+      humidity: Feuchtigkeitssensor
+      pressure: Drucksensor
+    portType:
+      tcp: TCP/IP
+      serial: Serieller Anschluss
+      usb: USB
+    table:
+      sensorName: Sensorname
+      sensorType: Sensortyp
+      portType: Verbindungstyp
+      wsid: OPI-Nummer
+      location: OPI-Standort
+      eqpid: Geräte-ID
+      ip: IP-Adresse
+      stationNo: Stationsnummer
+      port: Port
+      com: COM-Port
+      enable: Aktivieren
+      lastUpdateUser: Letzter Benutzer
+      lastUpdateTime: Letzte Aktualisierung
+      operation: Aktion
+      enabled: Aktivieren
+      disabled: Deaktivieren
+    button:
+      add: Sensor hinzufügen
+      edit: Bearbeiten
+      delete: Löschen
+    dialog:
+      addTitle: Sensor hinzufügen
+      editTitle: Sensor bearbeiten
+    form:
+      sensorName: Sensorname
+      sensorType: Sensortyp
+      portType: Verbindungstyp
+      enable: Aktivieren
+      wsid: OPI-Nummer
+      location: OPI-Standort
+      eqpid: Geräte-ID
+      ip: IP-Adresse
+      stationNo: Stationsnummer
+      port: Port
+      com: COM-Port
+      sensorNamePlaceholder: Bitte Sensornamen eingeben
+      sensorTypePlaceholder: Bitte Sensortyp auswählen
+      portTypePlaceholder: Bitte Verbindungstyp auswählen
+      wsidPlaceholder: Bitte OPI-Nummer eingeben
+      locationPlaceholder: Bitte OPI-Standort eingeben
+      eqpidPlaceholder: Bitte Geräte-ID eingeben
+      ipPlaceholder: Bitte IP-Adresse eingeben
+      stationNoPlaceholder: Bitte Stationsnummer eingeben
+      portPlaceholder: Bitte Portnummer eingeben
+      comPlaceholder: Bitte COM-Port eingeben (z.B. COM1)
+    rules:
+      sensorNameRequired: Sensorname ist erforderlich
+      sensorTypeRequired: Sensortyp ist erforderlich
+      portTypeRequired: Verbindungstyp ist erforderlich
+      wsidRequired: OPI-Nummer ist erforderlich
+      locationRequired: OPI-Standort ist erforderlich
+      eqpidRequired: Geräte-ID ist erforderlich
+      ipRequired: IP-Adresse ist erforderlich
+      ipFormat: Bitte gültige IP-Adresse eingeben
+      stationNoRequired: Stationsnummer ist erforderlich
+      portRequired: Port ist erforderlich
+      portFormat: Port muss eine Zahl sein
+    message:
+      confirmDelete: Möchten Sie Sensor {name} wirklich löschen?
+      deleteSuccess: Sie haben Sensor {name} gelöscht
+      addSuccess: Sie haben Sensor {name} hinzugefügt
+      editSuccess: Sie haben Sensor {name} aktualisiert
+      enableConfirm: Möchten Sie Sensor {name} wirklich aktivieren?
+      disableConfirm: Möchten Sie Sensor {name} wirklich deaktivieren?
+      enableSuccess: Sensor {name} wurde aktiviert
+      disableSuccess: Sensor {name} wurde deaktiviert
+      systemTip: Systemhinweis
+      confirm: Bestätigen
+      cancel: Abbrechen
+      enable: Aktivieren
+      disable: Deaktivieren
