@@ -160,7 +160,7 @@ const permissionRouter = {
 };
 
 const sensorManagementRouter = {
-  path: "/sensor-manage",
+  path: "/SensorManage",
   meta: {
     icon: "ri:sensor-line",
     title: "menus.pureSensorManage",
@@ -168,7 +168,7 @@ const sensorManagementRouter = {
   },
   children: [
     {
-      path: "/sensor-manage/sensor-list",
+      path: "/SensorManage/sensor-list",
       name: "SensorManage",
       component: "SensorManage/SensorListPage/index",
       meta: {
