@@ -176,6 +176,16 @@ const sensorManagementRouter = {
         title: "menus.pureSensorList",
         roles: ["admin", "common"]
       }
+    },
+    {
+      path: "/SensorManage/sensor-type",
+      name: "SensorTypeManage",
+      component: "SensorManage/SensorTypePage/index",
+      meta: {
+        icon: "ep:setting",
+        title: "传感器类型管理",
+        roles: ["admin"]
+      }
     }
   ]
 };

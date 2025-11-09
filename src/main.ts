@@ -22,6 +22,7 @@ import "element-plus/dist/index.css";
 // 导入字体图标
 import "./assets/iconfont/iconfont.js";
 import "./assets/iconfont/iconfont.css";
+import { setupIconify } from "@/plugins/iconify";
 
 const app = createApp(App);
 
@@ -63,3 +64,6 @@ getPlatformConfig(app).then(async config => {
   // .use(useEcharts);
   app.mount("#app");
 });
+
+// 在创建 app 之后，mount 之前调用
+setupIconify();
