@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useSensor } from "./utils/hook";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import { getSensorTypeList, type SensorTypeResult } from "@/api/sensor";
 
 import Delete from "~icons/ep/delete";
 import EditPen from "~icons/ep/edit-pen";
@@ -15,6 +16,8 @@ defineOptions({
 
 const formRef = ref();
 const tableRef = ref();
+const sensorTypeList = ref<SensorTypeResult[]>([]);
+const sensorTypeLoading = ref(false);
 
 const {
   form,
@@ -30,6 +33,29 @@ const {
   handleCurrentChange,
   handleSelectionChange
 } = useSensor();
+
+// 获取传感器类型列表
+const loadSensorTypes = async () => {
+  sensorTypeLoading.value = true;
+  try {
+    const data = await getSensorTypeList();
+    sensorTypeList.value = data || [];
+  } catch (error) {
+    console.error("获取传感器类型失败:", error);
+    // 使用默认数据
+    sensorTypeList.value = [
+      { SensorType: "Temperature", SensorDesc: "温度传感器" },
+      { SensorType: "Humidity", SensorDesc: "湿度传感器" },
+      { SensorType: "Pressure", SensorDesc: "压力传感器" }
+    ];
+  } finally {
+    sensorTypeLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  loadSensorTypes();
+});
 </script>
 
 <template>
@@ -54,10 +80,14 @@ const {
           placeholder="请选择传感器类型"
           clearable
           class="w-[180px]!"
+          :loading="sensorTypeLoading"
         >
-          <el-option label="温度传感器" value="Temperature" />
-          <el-option label="湿度传感器" value="Humidity" />
-          <el-option label="压力传感器" value="Pressure" />
+          <el-option
+            v-for="item in sensorTypeList"
+            :key="item.SensorType"
+            :label="item.SensorDesc"
+            :value="item.SensorType"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="状态：" prop="Enable">

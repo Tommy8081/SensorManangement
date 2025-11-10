@@ -15,7 +15,7 @@ export function useSensor() {
   const form = reactive({
     SensorName: "",
     SensorType: "",
-    Enable: ""
+    Enable: "" // 保持为空字符串，清除时为 ""
   });
   const formRef = ref();
   const dataList = ref<FormItemProps[]>([]);
@@ -190,8 +190,12 @@ export function useSensor() {
 
   async function onSearch() {
     loading.value = true;
+
+    // 构建查询参数，过滤掉 null 值
+
     // TODO: 替换为实际的传感器列表接口
-    // const { data } = await getSensorList(toRaw(form));
+    // const { data } = await getSensorList(queryParams);
+
     // 模拟数据
     const mockData = {
       list: [] as FormItemProps[],
@@ -237,10 +241,12 @@ export function useSensor() {
           Port: row?.Port ?? 0,
           Com: row?.Com ?? "",
           LastUpdateUser: row?.LastUpdateUser ?? "",
-          LastUpdateTime: row?.LastUpdateTime ?? ""
+          LastUpdateTime: row?.LastUpdateTime ?? "",
+          SvidList: row?.SvidList ?? [],
+          SensorConfigs: row?.SensorConfigs ?? "" // 传递已有配置
         }
       },
-      width: "40%",
+      width: "60%",
       draggable: true,
       fullscreen: deviceDetection(),
       fullscreenIcon: true,
@@ -249,25 +255,36 @@ export function useSensor() {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
+
         function chores() {
           const messageKey =
             title === "新增"
               ? "sensorManage.sensorList.message.addSuccess"
               : "sensorManage.sensorList.message.editSuccess";
+
+          // 提交时包含完整数据
+          console.log("提交数据:", {
+            ...curData,
+            SensorConfigs: curData.SensorConfigs, // JSON 字符串
+            SvidList: curData.SvidList
+          });
+
           message(t(messageKey, { name: curData.SensorName }), {
             type: "success"
           });
           done();
           onSearch();
         }
+
         FormRef.validate(valid => {
           if (valid) {
-            console.log("curData", curData);
             if (title === "新增") {
               // TODO: 调用新增传感器接口
+              // await addSensor(curData);
               chores();
             } else {
               // TODO: 调用修改传感器接口
+              // await updateSensor(curData);
               chores();
             }
           }
