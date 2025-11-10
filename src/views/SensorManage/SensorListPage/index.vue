@@ -9,6 +9,7 @@ import Delete from "~icons/ep/delete";
 import EditPen from "~icons/ep/edit-pen";
 import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
+import View from "~icons/ep/view";
 
 defineOptions({
   name: "SensorManage"
@@ -29,6 +30,7 @@ const {
   resetForm,
   openDialog,
   handleDelete,
+  handleViewSvidData,
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange
@@ -148,6 +150,16 @@ onMounted(() => {
           @page-current-change="handleCurrentChange"
         >
           <template #operation="{ row }">
+            <el-button
+              class="reset-margin"
+              link
+              type="primary"
+              :size="size"
+              :icon="useRenderIcon(View)"
+              @click="handleViewSvidData(row)"
+            >
+              查看
+            </el-button>
             <el-button
               class="reset-margin"
               link

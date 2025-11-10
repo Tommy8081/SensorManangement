@@ -9,6 +9,7 @@ import type { PaginationProps } from "@pureadmin/table";
 import { deviceDetection } from "@pureadmin/utils";
 import { reactive, ref, onMounted, h } from "vue";
 import { useI18n } from "vue-i18n";
+import SvidDataViewer from "../components/SvidDataViewer.vue";
 
 export function useSensor() {
   const { t } = useI18n();
@@ -117,6 +118,8 @@ export function useSensor() {
     }
   ];
 
+  const viewerRef = ref();
+
   function onChange({ row, index }) {
     const action = row.Enable
       ? t("sensorManage.sensorList.message.disable")
@@ -186,6 +189,40 @@ export function useSensor() {
 
   function handleSelectionChange(val) {
     console.log("handleSelectionChange", val);
+  }
+
+  function handleViewSvidData(row: FormItemProps) {
+    if (!row.SvidList || row.SvidList.length === 0) {
+      message("该传感器没有配置 SVID 列表", { type: "warning" });
+      return;
+    }
+
+    addDialog({
+      title: "SVID 数据查看",
+      props: {
+        sensorName: row.SensorName,
+        svidList: row.SvidList
+      },
+      width: "800px",
+      draggable: true,
+      fullscreen: deviceDetection(),
+      fullscreenIcon: true,
+      closeOnClickModal: false,
+      hideFooter: true,
+      contentRenderer: () =>
+        h(SvidDataViewer, {
+          ref: viewerRef,
+          sensorName: row.SensorName,
+          svidList: row.SvidList
+        }),
+      beforeClose: done => {
+        // 清理定时器
+        if (viewerRef.value?.cleanup) {
+          viewerRef.value.cleanup();
+        }
+        done();
+      }
+    });
   }
 
   async function onSearch() {
@@ -309,6 +346,7 @@ export function useSensor() {
     handleDelete,
     handleSizeChange,
     handleCurrentChange,
-    handleSelectionChange
+    handleSelectionChange,
+    handleViewSvidData
   };
 }

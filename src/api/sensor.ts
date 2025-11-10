@@ -47,3 +47,24 @@ export const getSensorConfig = (sensorType: string) => {
     `/sensor/type/${sensorType}/config`
   );
 };
+
+/** 获取 SVID 数据 */
+export const getSvidData = (svid: string) => {
+  return http.request<{
+    svid: string;
+    value: any;
+    timestamp: string;
+  }>("get", `/sensor/svid/${svid}/data`);
+};
+
+/** 批量获取 SVID 数据 */
+export const getBatchSvidData = (svidList: string[]) => {
+  return http.request<
+    Array<{
+      svid: string;
+      value: any;
+      timestamp: string;
+      status: string;
+    }>
+  >("post", "/sensor/svid/batch", { data: { svidList } });
+};

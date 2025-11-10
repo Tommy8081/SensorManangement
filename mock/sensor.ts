@@ -259,5 +259,60 @@ export default defineFakeRoute([
         data: configs[sensorKey as string] || {}
       };
     }
+  },
+  {
+    url: "/sensor/svid/:svid/data",
+    method: "get",
+    response: ({ params }) => {
+      const isSuccess = Math.random() > 0.2;
+
+      if (!isSuccess) {
+        return {
+          success: false,
+          message: "数据获取失败"
+        };
+      }
+
+      return {
+        success: true,
+        data: {
+          svid: params.svid,
+          value: {
+            temperature: (Math.random() * 100).toFixed(2),
+            humidity: (Math.random() * 100).toFixed(2),
+            pressure: (Math.random() * 1000).toFixed(2)
+          },
+          timestamp: new Date().toLocaleString("zh-CN")
+        }
+      };
+    }
+  },
+  {
+    url: "/sensor/svid/batch",
+    method: "post",
+    response: ({ body }) => {
+      const { svidList } = body;
+
+      const data = svidList.map(svid => {
+        const isSuccess = Math.random() > 0.2;
+        return {
+          svid,
+          value: isSuccess
+            ? {
+              temperature: (Math.random() * 100).toFixed(2),
+              humidity: (Math.random() * 100).toFixed(2),
+              pressure: (Math.random() * 1000).toFixed(2)
+            }
+            : null,
+          timestamp: new Date().toLocaleString("zh-CN"),
+          status: isSuccess ? "success" : "error"
+        };
+      });
+
+      return {
+        success: true,
+        data
+      };
+    }
   }
 ]);
