@@ -17,27 +17,12 @@ export const getSensorTypeList = () => {
 
 /** 获取传感器列表 */
 export const getSensorList = (data?: object) => {
-  return http.request("post", "/sensor/list", { data });
-};
-
-/** 新增传感器 */
-export const addSensor = (data: object) => {
-  return http.request("post", "/sensor/add", { data });
-};
-
-/** 更新传感器 */
-export const updateSensor = (data: object) => {
-  return http.request("put", "/sensor/update", { data });
-};
-
-/** 删除传感器 */
-export const deleteSensor = (id: string) => {
-  return http.request("delete", `/sensor/delete/${id}`);
-};
-
-/** 更新传感器状态 */
-export const updateSensorStatus = (id: string, enable: boolean) => {
-  return http.request("put", `/sensor/status/${id}`, { data: { enable } });
+  return http.request<{
+    list: Array<any>;
+    total: number;
+    pageSize: number;
+    currentPage: number;
+  }>("post", "/sensor/list", { data });
 };
 
 /** 获取传感器类型配置 */

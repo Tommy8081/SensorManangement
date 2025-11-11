@@ -55,8 +55,17 @@ const sensorConfigIniText = ref("");
 const loadSensorTypes = async () => {
   sensorTypeLoading.value = true;
   try {
-    const data = await getSensorTypeList();
-    sensorTypeList.value = data || [];
+    const response = await getSensorTypeList();
+    console.log("Sensor Types Response:", response); // 调试日志
+
+    // 根据实际响应结构调整：支持直接返回数组或 { data: [...] } 的情况
+    if (Array.isArray(response)) {
+      sensorTypeList.value = response;
+    } else if (Array.isArray((response as any)?.data)) {
+      sensorTypeList.value = (response as any).data;
+    } else {
+      sensorTypeList.value = [];
+    }
   } catch (error) {
     console.error("获取传感器类型失败:", error);
     ElMessage.error("获取传感器类型失败");
@@ -591,7 +600,7 @@ defineExpose({ getRef });
         <span class="text-sm font-semibold text-primary">SVID 配置</span>
       </el-divider>
       <div class="svid-config-container">
-        <SvidConfig v-model="svidList" />
+        <SvidConfig v-model="svidList" :station-no="newFormInline.StationNo" />
       </div>
     </template>
   </el-form>

@@ -10,6 +10,7 @@ import { deviceDetection } from "@pureadmin/utils";
 import { reactive, ref, onMounted, h } from "vue";
 import { useI18n } from "vue-i18n";
 import SvidDataViewer from "../components/SvidDataViewer.vue";
+import { getSensorList } from "@/api/sensor";
 
 export function useSensor() {
   const { t } = useI18n();
@@ -191,9 +192,15 @@ export function useSensor() {
     console.log("handleSelectionChange", val);
   }
 
+  // 查看 SVID 数据
   function handleViewSvidData(row: FormItemProps) {
     if (!row.SvidList || row.SvidList.length === 0) {
       message("该传感器没有配置 SVID 列表", { type: "warning" });
+      return;
+    }
+
+    if (!row.StationNo || row.StationNo <= 0) {
+      message("该传感器没有配置站点编号", { type: "warning" });
       return;
     }
 
@@ -201,9 +208,10 @@ export function useSensor() {
       title: "SVID 数据查看",
       props: {
         sensorName: row.SensorName,
-        svidList: row.SvidList
+        svidList: row.SvidList,
+        stationNo: row.StationNo
       },
-      width: "800px",
+      width: "900px",
       draggable: true,
       fullscreen: deviceDetection(),
       fullscreenIcon: true,
@@ -213,7 +221,8 @@ export function useSensor() {
         h(SvidDataViewer, {
           ref: viewerRef,
           sensorName: row.SensorName,
-          svidList: row.SvidList
+          svidList: row.SvidList,
+          stationNo: row.StationNo
         }),
       beforeClose: done => {
         // 清理定时器
@@ -228,26 +237,33 @@ export function useSensor() {
   async function onSearch() {
     loading.value = true;
 
-    // 构建查询参数，过滤掉 null 值
+    try {
+      // 调用传感器列表接口
+      const response = await getSensorList(form);
 
-    // TODO: 替换为实际的传感器列表接口
-    // const { data } = await getSensorList(queryParams);
+      console.log("API Response:", response); // 调试日志
 
-    // 模拟数据
-    const mockData = {
-      list: [] as FormItemProps[],
-      total: 0,
-      pageSize: 10,
-      currentPage: 1
-    };
-    dataList.value = mockData.list;
-    pagination.total = mockData.total;
-    pagination.pageSize = mockData.pageSize;
-    pagination.currentPage = mockData.currentPage;
+      // 支持两种返回结构：{ data: { list, total, ... } } 或者直接 { list, total, ... }
+      const res = (response as any)?.data ?? (response as any);
 
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
+      if (res && res.list) {
+        dataList.value = res.list || [];
+        pagination.total = res.total || 0;
+        pagination.pageSize = res.pageSize || 10;
+        pagination.currentPage = res.currentPage || 1;
+      } else {
+        dataList.value = [];
+        pagination.total = 0;
+      }
+    } catch (error) {
+      console.error("获取传感器列表失败:", error);
+      dataList.value = [];
+      pagination.total = 0;
+    } finally {
+      setTimeout(() => {
+        loading.value = false;
+      }, 300);
+    }
   }
 
   const resetForm = formEl => {
@@ -330,8 +346,10 @@ export function useSensor() {
     });
   }
 
-  onMounted(() => {
-    onSearch();
+  onMounted(async () => {
+    console.log("Component mounted, fetching data...");
+    await onSearch();
+    console.log("Data fetched:", dataList.value);
   });
 
   return {
