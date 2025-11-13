@@ -12,64 +12,46 @@ export default defineFakeRoute([
             SensorType: "Temperature",
             SensorDesc: "温度传感器",
             SensorConfigs: JSON.stringify({
-              General: {
-                unit: "℃",
-                protocol: "Modbus RTU",
-                enable: true
-              },
-              Range: {
-                min: -40,
-                max: 125,
-                accuracy: 0.5
-              },
-              Communication: {
-                baudRate: 9600,
-                dataBits: 8,
-                stopBits: 1,
-                parity: "None",
-                address: 1
-              }
+              unit: "℃",
+              protocol: "Modbus RTU",
+              enable: true,
+              min: -40,
+              max: 125,
+              accuracy: 0.5,
+              baudRate: 9600,
+              dataBits: 8,
+              stopBits: 1,
+              parity: "None",
+              address: 1
             })
           },
           {
             SensorType: "Humidity",
             SensorDesc: "湿度传感器",
             SensorConfigs: JSON.stringify({
-              General: {
-                unit: "%RH",
-                protocol: "I2C",
-                enable: true
-              },
-              Range: {
-                min: 0,
-                max: 100,
-                accuracy: 2
-              },
-              Communication: {
-                address: "0x40",
-                timeout: 1000,
-                interval: 500
-              }
+              unit: "%RH",
+              protocol: "I2C",
+              enable: true,
+              min: 0,
+              max: 100,
+              accuracy: 2,
+              address: "0x40",
+              timeout: 1000,
+              interval: 500
             })
           },
           {
             SensorType: "Pressure",
             SensorDesc: "压力传感器",
             SensorConfigs: JSON.stringify({
-              General: {
-                unit: "Pa",
-                protocol: "TCP/IP",
-                enable: true
-              },
-              Range: {
-                min: 0,
-                max: 100000,
-                accuracy: 100
-              },
-              Communication: {
-                port: 502,
-                timeout: 3000
-              }
+              unit: "Pa",
+              protocol: "TCP/IP",
+              enable: true,
+              min: 0,
+              max: 100000,
+              accuracy: 100,
+              port: 502,
+              timeout: 3000
             })
           },
           {

@@ -1,6 +1,6 @@
 /**
- * INI 格式解析器
- * 将 INI 格式文本转换为 JSON 对象
+ * 简化的 INI 格式解析器
+ * 将简单的 key=value 格式转换为 JSON 对象
  */
 export function parseINI(iniText: string): Record<string, any> {
   if (!iniText || typeof iniText !== "string") {
@@ -8,28 +8,15 @@ export function parseINI(iniText: string): Record<string, any> {
   }
 
   const result: Record<string, any> = {};
-  let currentSection = "";
   let hasValidContent = false;
 
   const lines = iniText.split(/\r?\n/);
 
-  for (let line of lines) {
-    line = line.trim();
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
 
     // 跳过空行和注释
     if (!line || line.startsWith(";") || line.startsWith("#")) {
-      continue;
-    }
-
-    // 解析节（section）[SectionName]
-    const sectionMatch = line.match(/^\[(.+)\]$/);
-    if (sectionMatch) {
-      currentSection = sectionMatch[1].trim();
-      if (!currentSection) {
-        throw new Error("节名称不能为空");
-      }
-      result[currentSection] = {};
-      hasValidContent = true;
       continue;
     }
 
@@ -40,7 +27,7 @@ export function parseINI(iniText: string): Record<string, any> {
       let value: any = keyValueMatch[2].trim();
 
       if (!key) {
-        throw new Error("配置项的键不能为空");
+        throw new Error(`第 ${i + 1} 行: 配置项的键不能为空`);
       }
 
       // 移除引号
@@ -52,21 +39,19 @@ export function parseINI(iniText: string): Record<string, any> {
       }
 
       // 尝试转换为数字或布尔值
-      if (value === "true") value = true;
-      else if (value === "false") value = false;
-      else if (!isNaN(Number(value)) && value !== "") value = Number(value);
-
-      if (currentSection) {
-        result[currentSection][key] = value;
-        hasValidContent = true;
-      } else {
-        // 如果没有节，将键值对放在根级别
-        result[key] = value;
-        hasValidContent = true;
+      if (value === "true") {
+        value = true;
+      } else if (value === "false") {
+        value = false;
+      } else if (value !== "" && !isNaN(Number(value))) {
+        value = Number(value);
       }
+
+      result[key] = value;
+      hasValidContent = true;
     } else {
-      // 如果不是注释、空行、节或键值对，则格式错误
-      throw new Error(`第 ${lines.indexOf(line) + 1} 行格式错误: "${line}"`);
+      // 如果不是注释、空行或键值对，则格式错误
+      throw new Error(`第 ${i + 1} 行格式错误: "${line}"`);
     }
   }
 
@@ -78,21 +63,13 @@ export function parseINI(iniText: string): Record<string, any> {
 }
 
 /**
- * 将 JSON 对象转换为 INI 格式文本
+ * 将 JSON 对象转换为简单的 INI 格式文本
  */
 export function stringifyINI(obj: Record<string, any>): string {
   let iniText = "";
 
-  for (const [section, values] of Object.entries(obj)) {
-    if (typeof values === "object" && !Array.isArray(values)) {
-      iniText += `[${section}]\n`;
-      for (const [key, value] of Object.entries(values)) {
-        iniText += `${key}=${value}\n`;
-      }
-      iniText += "\n";
-    } else {
-      iniText += `${section}=${values}\n`;
-    }
+  for (const [key, value] of Object.entries(obj)) {
+    iniText += `${key}=${value}\n`;
   }
 
   return iniText.trim();
@@ -102,13 +79,13 @@ export function stringifyINI(obj: Record<string, any>): string {
  * 将配置对象转换为易读的描述列表
  */
 export function formatConfigForDisplay(config: Record<string, any>): Array<{
-  section: string;
-  items: Array<{ key: string; value: any; label: string }>;
+  key: string;
+  value: any;
+  label: string;
 }> {
   const labelMap: Record<string, string> = {
     // 通用字段
     unit: "单位",
-    range: "范围",
     min: "最小值",
     max: "最大值",
     accuracy: "精度",
@@ -124,6 +101,7 @@ export function formatConfigForDisplay(config: Record<string, any>): Array<{
     // 网络相关
     host: "主机地址",
     port: "端口号",
+    ip: "IP地址",
 
     // 传感器特定
     sensorModel: "传感器型号",
@@ -135,21 +113,9 @@ export function formatConfigForDisplay(config: Record<string, any>): Array<{
     description: "描述"
   };
 
-  const result: Array<{
-    section: string;
-    items: Array<{ key: string; value: any; label: string }>;
-  }> = [];
-
-  for (const [section, values] of Object.entries(config)) {
-    if (typeof values === "object" && !Array.isArray(values)) {
-      const items = Object.entries(values).map(([key, value]) => ({
-        key,
-        value,
-        label: labelMap[key] || key
-      }));
-      result.push({ section, items });
-    }
-  }
-
-  return result;
+  return Object.entries(config).map(([key, value]) => ({
+    key,
+    value,
+    label: labelMap[key] || key
+  }));
 }

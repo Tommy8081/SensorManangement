@@ -17,16 +17,12 @@ const ruleFormRef = ref();
 const newFormInline = ref(props.formInline);
 
 // 示例INI模板
-const iniTemplate = `[General]
-unit=℃
+const iniTemplate = `unit=℃
 protocol=Modbus RTU
 enable=true
-
-[Range]
 min=-40
 max=125
-
-[Communication]
+accuracy=0.5
 baudRate=9600
 dataBits=8
 stopBits=1
@@ -98,16 +94,20 @@ defineExpose({ getRef });
           v-model="newFormInline.SensorConfigs"
           type="textarea"
           :rows="12"
-          placeholder="请粘贴INI格式配置内容，格式如下：
-[Section]
-key=value"
+          placeholder="请输入配置内容，格式：
+key=value
+例如：
+unit=℃
+protocol=Modbus RTU
+min=-40
+max=125"
         />
         <div class="mt-2 text-xs text-gray-500">
           <p>提示：</p>
           <ul class="ml-4 list-disc">
-            <li>使用 [节名] 定义配置节</li>
             <li>使用 key=value 格式定义配置项</li>
             <li>支持注释（以 ; 或 # 开头的行）</li>
+            <li>每行一个配置项</li>
           </ul>
         </div>
       </div>

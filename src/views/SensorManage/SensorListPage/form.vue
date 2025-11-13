@@ -479,117 +479,81 @@ defineExpose({ getRef });
       </el-divider>
 
       <div class="sensor-config-container">
-        <el-alert
-          v-if="!newFormInline.SensorType"
-          type="warning"
-          :closable="false"
-          show-icon
-        >
-          <template #title> 请先选择传感器类型以加载对应的配置 </template>
-        </el-alert>
-
-        <div v-else-if="sensorConfigLoading" class="loading-container">
-          <el-icon class="is-loading" :size="24">
-            <Loading />
-          </el-icon>
-          <span class="ml-2">加载配置中...</span>
-        </div>
-
-        <div
-          v-else-if="Object.keys(currentSensorConfig).length === 0"
-          class="empty-container"
-        >
-          <el-empty description="该传感器类型暂无配置信息" :image-size="80" />
-        </div>
-
-        <div v-else>
-          <!-- 配置操作按钮 -->
-          <div class="config-actions mb-3">
-            <el-button
-              v-if="!showEditSensorConfig"
-              type="primary"
-              size="small"
-              @click="showEditSensorConfig = true"
-            >
-              编辑配置
+        <!-- 配置操作按钮 -->
+        <div class="config-actions mb-3">
+          <el-button
+            v-if="!showEditSensorConfig"
+            type="primary"
+            size="small"
+            @click="showEditSensorConfig = true"
+          >
+            编辑配置
+          </el-button>
+          <template v-else>
+            <el-button type="success" size="small" @click="saveSensorConfig">
+              保存配置
             </el-button>
-            <template v-else>
-              <el-button type="success" size="small" @click="saveSensorConfig">
-                保存配置
-              </el-button>
-              <el-button size="small" @click="cancelEditConfig">
-                取消
-              </el-button>
+            <el-button size="small" @click="cancelEditConfig"> 取消 </el-button>
+          </template>
+        </div>
+
+        <!-- 编辑模式：INI 文本编辑器 -->
+        <div v-if="showEditSensorConfig" class="config-editor">
+          <el-input
+            v-model="sensorConfigIniText"
+            type="textarea"
+            :rows="15"
+            placeholder="请输入配置内容，格式：
+key=value
+例如：
+unit=℃
+protocol=Modbus RTU
+min=-40
+max=125"
+          />
+          <el-alert type="info" :closable="false" class="mt-2">
+            <template #title>
+              <span class="text-xs">
+                配置格式为 key=value，保存后将转换为 JSON 格式存储
+              </span>
             </template>
-          </div>
+          </el-alert>
+        </div>
 
-          <!-- 编辑模式：INI 文本编辑器 -->
-          <div v-if="showEditSensorConfig" class="config-editor">
-            <el-input
-              v-model="sensorConfigIniText"
-              type="textarea"
-              :rows="15"
-              placeholder="请输入 INI 格式配置"
-            />
-            <el-alert type="info" :closable="false" class="mt-2">
-              <template #title>
-                <span class="text-xs">
-                  配置格式为 INI，保存后将转换为 JSON 格式存储
-                </span>
-              </template>
-            </el-alert>
-          </div>
-
-          <!-- 查看模式：折叠面板展示 -->
-          <div v-else>
-            <el-collapse class="config-collapse" accordion>
-              <el-collapse-item
-                v-for="(section, index) in formatConfigForDisplay"
-                :key="index"
-                :name="index"
+        <!-- 查看模式：表格展示 -->
+        <div v-else>
+          <el-descriptions :column="2" border size="small">
+            <el-descriptions-item
+              v-for="item in formatConfigForDisplay"
+              :key="item.key"
+              :label="item.label"
+              label-class-name="config-label"
+            >
+              <el-tag
+                v-if="typeof item.value === 'boolean'"
+                :type="item.value ? 'success' : 'info'"
+                size="small"
               >
-                <template #title>
-                  <div class="section-title">
-                    <el-icon><Setting /></el-icon>
-                    <span class="ml-2">{{ section.section }}</span>
-                  </div>
-                </template>
+                {{ item.value ? "是" : "否" }}
+              </el-tag>
+              <el-tag
+                v-else-if="typeof item.value === 'number'"
+                type="warning"
+                size="small"
+              >
+                {{ item.value }}
+              </el-tag>
+              <span v-else class="config-value">{{ item.value }}</span>
+            </el-descriptions-item>
+          </el-descriptions>
 
-                <el-descriptions :column="2" border size="small">
-                  <el-descriptions-item
-                    v-for="item in section.items"
-                    :key="item.key"
-                    :label="item.label"
-                    label-class-name="config-label"
-                  >
-                    <el-tag
-                      v-if="typeof item.value === 'boolean'"
-                      :type="item.value ? 'success' : 'info'"
-                      size="small"
-                    >
-                      {{ item.value ? "是" : "否" }}
-                    </el-tag>
-                    <el-tag
-                      v-else-if="typeof item.value === 'number'"
-                      type="warning"
-                      size="small"
-                    >
-                      {{ item.value }}
-                    </el-tag>
-                    <span v-else class="config-value">{{ item.value }}</span>
-                  </el-descriptions-item>
-                </el-descriptions>
-              </el-collapse-item>
-            </el-collapse>
-
-            <el-alert type="info" :closable="false" show-icon class="mt-3">
-              <template #title>
-                <span class="text-xs">
-                  以上配置来自传感器类型管理。点击"编辑配置"可自定义此传感器的配置。
-                </span>
-              </template>
-            </el-alert>
-          </div>
+          <el-alert type="info" :closable="false" show-icon class="mt-3">
+            <template #title>
+              <span class="text-xs">
+                以上配置来自传感器类型管理。点击"编辑配置"可自定义此传感器的配置。
+              </span>
+            </template>
+          </el-alert>
         </div>
       </div>
     </template>
