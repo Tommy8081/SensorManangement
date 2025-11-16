@@ -19,7 +19,8 @@
     "lint:stylelint": "stylelint --cache --fix \"**/*.{html,vue,css,scss}\" --cache-location node_modules/.cache/stylelint/",
     "lint": "pnpm lint:eslint && pnpm lint:prettier && pnpm lint:stylelint",
     "prepare": "husky",
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "node scripts/check-node-version.js",
+    "check-version": "node scripts/check-node-version.js"
   },
   "keywords": [
     "pure-admin-thin",
@@ -136,9 +137,10 @@
     "vue-tsc": "^3.0.4"
   },
   "engines": {
-    "node": "^20.19.0 || >=22.12.0",
-    "pnpm": ">=9"
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
   },
+  "packageManager": "pnpm@8.15.0",
   "pnpm": {
     "allowedDeprecatedVersions": {
       "are-we-there-yet": "*",

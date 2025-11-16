@@ -16,41 +16,25 @@ const activeNames = ref<string | number | Array<string | number>>([]);
     <div class="config-header">
       <h3>{{ sensorType }} - 配置详情</h3>
     </div>
-
     <div class="config-content">
-      <el-collapse v-model="activeNames" accordion>
-        <el-collapse-item
-          v-for="(section, index) in formattedConfig"
-          :key="index"
-          :name="index"
+      <el-descriptions :column="2" border>
+        <el-descriptions-item
+          v-for="item in formattedConfig"
+          :key="item.key"
+          :label="item.label"
         >
-          <template #title>
-            <div class="section-title">
-              <el-icon><Setting /></el-icon>
-              <span class="ml-2">{{ section.section }}</span>
-            </div>
-          </template>
-
-          <el-descriptions :column="2" border>
-            <el-descriptions-item
-              v-for="item in section.items"
-              :key="item.key"
-              :label="item.label"
-            >
-              <el-tag
-                v-if="typeof item.value === 'boolean'"
-                :type="item.value ? 'success' : 'info'"
-              >
-                {{ item.value ? "是" : "否" }}
-              </el-tag>
-              <el-tag v-else-if="typeof item.value === 'number'" type="warning">
-                {{ item.value }}
-              </el-tag>
-              <span v-else>{{ item.value }}</span>
-            </el-descriptions-item>
-          </el-descriptions>
-        </el-collapse-item>
-      </el-collapse>
+          <el-tag
+            v-if="typeof item.value === 'boolean'"
+            :type="item.value ? 'success' : 'info'"
+          >
+            {{ item.value ? "是" : "否" }}
+          </el-tag>
+          <el-tag v-else-if="typeof item.value === 'number'" type="warning">
+            {{ item.value }}
+          </el-tag>
+          <span v-else>{{ item.value }}</span>
+        </el-descriptions-item>
+      </el-descriptions>
     </div>
   </div>
 </template>
