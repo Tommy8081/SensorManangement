@@ -1,23 +1,32 @@
 import { http } from "@/utils/http";
 import axios from "axios";
+import type {
+  SignForwardItem,
+  SignForwardDetailData
+} from "@/components/ReSignForward/types";
 
-/** 获取待传签列表请求参数 */
 export interface GetSignOffListParams {
   userAccount: string;
 }
 
-/**
- * 获取待传签列表
- * POST {project_base_url}/api/getSignOffList
- * 返回: string[] 例如 ["proclnsId1", "proclnsId2"]
- */
-export const getSignOffList = (params: GetSignOffListParams) => {
-  return http.request<string[]>("post", "/api/getSignOffList", {
+/** 获取待传签列表（当前） POST /api/getSignOffList */
+export const getSignOffList = (params: GetSignOffListParams) =>
+  http.request<SignForwardItem[]>("post", "/api/getSignOffList", {
     data: params
   });
-};
 
-/** 传签参数 */
+/** 获取历史传签列表 POST /api/getSignOffHistoryList */
+export const getSignOffHistoryList = (params: GetSignOffListParams) =>
+  http.request<SignForwardItem[]>("post", "/api/getSignOffHistoryList", {
+    data: params
+  });
+
+/** 获取传签详情 POST /api/getSignOffDetail */
+export const getSignOffDetail = (params: { proclnsId: string }) =>
+  http.request<SignForwardDetailData>("post", "/api/getSignOffDetail", {
+    data: params
+  });
+
 export interface AssignParams {
   action: string;
   fromAccount: string;
@@ -26,11 +35,12 @@ export interface AssignParams {
   toAccount: string;
 }
 
-/**
- * 执行传签（第三方接口）
- * POST {VITE_SIGN_THIRD_PARTY_URL}/SAM/v3/rdpp/assign
- */
+/** 执行传签（第三方接口，用 axios 直接调用） POST {VITE_SIGN_THIRD_PARTY_URL}/SAM/v3/rdpp/assign */
 export const assignSignForward = (params: AssignParams) => {
   const baseUrl = (import.meta as any).env.VITE_SIGN_THIRD_PARTY_URL || "";
   return axios.post(`${baseUrl}/SAM/v3/rdpp/assign`, params);
 };
+
+/** Approve/Disapprove 传签 POST {VITE_SIGN_THIRD_PARTY_URL}/SAM/v3/rdpp/assign */
+export const actionSignForward = (params: AssignParams) =>
+  assignSignForward(params);

@@ -19,6 +19,16 @@ export default {
         title: "待传签列表",
         showLink: true
       }
+    },
+    {
+      path: "/sign/detail",
+      name: "SignForwardDetailPage",
+      component: () => import("@/views/SignForward/detail.vue"),
+      meta: {
+        title: "传签详情",
+        showLink: false,
+        showParent: true
+      }
     }
   ]
 } satisfies RouteConfigsTable;
