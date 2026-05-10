@@ -19,21 +19,6 @@ const isHistory = route.query.isHistory === "1";
 const detailData = ref<SignForwardDetailData | null>(null);
 const loading = ref(false);
 
-function parseChangeContent(content: unknown) {
-  if (typeof content !== "string") return content;
-  try {
-    return JSON.parse(content);
-  } catch {
-    return {
-      beforeValue: "",
-      afterValue: content,
-      description: "",
-      modifier: "",
-      modifyTime: ""
-    };
-  }
-}
-
 async function loadDetail() {
   loading.value = true;
   try {
@@ -41,7 +26,6 @@ async function loadDetail() {
     const data = (res as any)?.data ?? res;
     detailData.value = {
       ...data,
-      changeContent: parseChangeContent(data?.changeContent),
       isHistory
     };
   } catch {
