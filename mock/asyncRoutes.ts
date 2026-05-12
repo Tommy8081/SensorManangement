@@ -190,6 +190,13 @@ const sensorManagementRouter = {
   ]
 };
 
+export const asyncRoutes = [
+  sensorManagementRouter,
+  systemManagementRouter,
+  systemMonitorRouter,
+  permissionRouter
+];
+
 export default defineFakeRoute([
   {
     url: "/get-async-routes",
@@ -197,12 +204,7 @@ export default defineFakeRoute([
     response: () => {
       return {
         success: true,
-        data: [
-          sensorManagementRouter,
-          systemManagementRouter,
-          systemMonitorRouter,
-          permissionRouter
-        ]
+        data: asyncRoutes
       };
     }
   }
