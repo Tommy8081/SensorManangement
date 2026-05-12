@@ -7,13 +7,13 @@ import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "../utils/types";
 import type { PaginationProps } from "@pureadmin/table";
 import { deviceDetection } from "@pureadmin/utils";
-import { reactive, ref, onMounted, h } from "vue";
+import { reactive, ref, onMounted, h, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import SvidDataViewer from "../components/SvidDataViewer.vue";
 import { getSensorList } from "@/api/sensor";
 
 export function useSensor() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n(); // 添加 locale
   const form = reactive({
     SensorName: "",
     SensorType: "",
@@ -30,7 +30,8 @@ export function useSensor() {
     currentPage: 1,
     background: true
   });
-  const columns: TableColumnList = [
+  // 使用 computed 使列配置响应式
+  const columns = computed<TableColumnList>(() => [
     {
       label: t("sensorManage.sensorList.table.sensorName"),
       prop: "SensorName",
@@ -117,7 +118,7 @@ export function useSensor() {
       width: 180,
       slot: "operation"
     }
-  ];
+  ]);
 
   const viewerRef = ref();
 
@@ -195,17 +196,21 @@ export function useSensor() {
   // 查看 SVID 数据
   function handleViewSvidData(row: FormItemProps) {
     if (!row.SvidList || row.SvidList.length === 0) {
-      message("该传感器没有配置 SVID 列表", { type: "warning" });
+      message(t("sensorManage.sensorList.message.noSvidList"), {
+        type: "warning"
+      });
       return;
     }
 
     if (!row.StationNo || row.StationNo <= 0) {
-      message("该传感器没有配置站点编号", { type: "warning" });
+      message(t("sensorManage.sensorList.message.noStationNo"), {
+        type: "warning"
+      });
       return;
     }
 
     addDialog({
-      title: "SVID 数据查看",
+      title: t("sensorManage.svidViewer.title"),
       props: {
         sensorName: row.SensorName,
         svidList: row.SvidList,
@@ -225,7 +230,6 @@ export function useSensor() {
           stationNo: row.StationNo
         }),
       beforeClose: done => {
-        // 清理定时器
         if (viewerRef.value?.cleanup) {
           viewerRef.value.cleanup();
         }
@@ -296,10 +300,11 @@ export function useSensor() {
           LastUpdateUser: row?.LastUpdateUser ?? "",
           LastUpdateTime: row?.LastUpdateTime ?? "",
           SvidList: row?.SvidList ?? [],
-          SensorConfigs: row?.SensorConfigs ?? "" // 传递已有配置
+          SensorConfigs: row?.SensorConfigs ?? ""
         }
       },
-      width: "60%",
+      width: "70%", // 增加宽度
+      top: "5vh", // 距离顶部距离
       draggable: true,
       fullscreen: deviceDetection(),
       fullscreenIcon: true,
@@ -346,6 +351,12 @@ export function useSensor() {
     });
   }
 
+  // 监听语言变化，强制刷新列
+  const tableKey = ref(0);
+  watch(locale, () => {
+    tableKey.value++;
+  });
+
   onMounted(async () => {
     console.log("Component mounted, fetching data...");
     await onSearch();
@@ -358,6 +369,7 @@ export function useSensor() {
     columns,
     dataList,
     pagination,
+    tableKey, // 导出 tableKey
     onSearch,
     resetForm,
     openDialog,

@@ -10,7 +10,7 @@ export type SensorTypeResult = {
   SensorConfigs?: string;
 };
 
-/** 获取传感器类型列表（包含配置） */
+/** 获取传感器类型列表 */
 export const getSensorTypeList = () => {
   return http.request<Array<SensorTypeResult>>("get", "/sensor/types");
 };

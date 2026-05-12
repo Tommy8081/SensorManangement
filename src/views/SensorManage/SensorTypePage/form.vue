@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { ElMessage } from "element-plus";
 import { formRules } from "./utils/rule";
 import { FormProps } from "./utils/types";
+import { ElMessage } from "element-plus";
 import { parseINI } from "./utils/iniParser";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
@@ -16,7 +19,6 @@ const props = withDefaults(defineProps<FormProps>(), {
 const ruleFormRef = ref();
 const newFormInline = ref(props.formInline);
 
-// 示例INI模板
 const iniTemplate = `unit=℃
 protocol=Modbus RTU
 enable=true
@@ -29,24 +31,21 @@ stopBits=1
 parity=None
 address=1`;
 
-// 插入示例
 const insertExample = () => {
   newFormInline.value.SensorConfigs = iniTemplate;
+  ElMessage.success(t("sensorManage.sensorType.message.validateSuccess"));
 };
 
-// 验证INI格式
 const validateIni = () => {
-  if (!newFormInline.value.SensorConfigs) {
-    ElMessage.warning("请先输入配置内容");
-    return;
-  }
-
   try {
-    const parsed = parseINI(newFormInline.value.SensorConfigs);
-    console.log("解析结果:", parsed);
-    ElMessage.success("INI格式验证通过！");
-  } catch (e) {
-    ElMessage.error("INI格式验证失败：" + (e as Error).message);
+    parseINI(newFormInline.value.SensorConfigs);
+    ElMessage.success(t("sensorManage.sensorType.message.validateSuccess"));
+  } catch (error) {
+    ElMessage.error(
+      t("sensorManage.sensorType.message.validateError") +
+        "：" +
+        (error as Error).message
+    );
   }
 };
 
@@ -64,50 +63,55 @@ defineExpose({ getRef });
     :rules="formRules"
     label-width="120px"
   >
-    <el-form-item label="传感器类型" prop="SensorType">
+    <el-form-item
+      :label="t('sensorManage.sensorType.form.sensorType')"
+      prop="SensorType"
+    >
       <el-input
         v-model="newFormInline.SensorType"
         clearable
-        placeholder="请输入传感器类型（如：Temperature）"
+        :placeholder="t('sensorManage.sensorType.form.placeholder.sensorType')"
       />
     </el-form-item>
 
-    <el-form-item label="传感器描述" prop="SensorDesc">
+    <el-form-item
+      :label="t('sensorManage.sensorType.form.sensorDesc')"
+      prop="SensorDesc"
+    >
       <el-input
         v-model="newFormInline.SensorDesc"
         clearable
-        placeholder="请输入传感器描述"
+        :placeholder="t('sensorManage.sensorType.form.placeholder.sensorDesc')"
       />
     </el-form-item>
 
-    <el-form-item label="传感器配置" prop="SensorConfigs">
+    <el-form-item
+      :label="t('sensorManage.sensorType.form.sensorConfigs')"
+      prop="SensorConfigs"
+    >
       <div class="w-full">
         <div class="mb-2 flex gap-2">
           <el-button type="primary" link @click="insertExample">
-            插入示例模板
+            {{ t("sensorManage.sensorType.form.actions.insertExample") }}
           </el-button>
           <el-button type="success" link @click="validateIni">
-            验证格式
+            {{ t("sensorManage.sensorType.form.actions.validate") }}
           </el-button>
         </div>
         <el-input
           v-model="newFormInline.SensorConfigs"
           type="textarea"
           :rows="12"
-          placeholder="请输入配置内容，格式：
-key=value
-例如：
-unit=℃
-protocol=Modbus RTU
-min=-40
-max=125"
+          :placeholder="
+            t('sensorManage.sensorType.form.placeholder.sensorConfigs')
+          "
         />
         <div class="mt-2 text-xs text-gray-500">
-          <p>提示：</p>
+          <p>{{ t("sensorManage.sensorType.form.tips.title") }}</p>
           <ul class="ml-4 list-disc">
-            <li>使用 key=value 格式定义配置项</li>
-            <li>支持注释（以 ; 或 # 开头的行）</li>
-            <li>每行一个配置项</li>
+            <li>{{ t("sensorManage.sensorType.form.tips.format") }}</li>
+            <li>{{ t("sensorManage.sensorType.form.tips.comment") }}</li>
+            <li>{{ t("sensorManage.sensorType.form.tips.oneLine") }}</li>
           </ul>
         </div>
       </div>

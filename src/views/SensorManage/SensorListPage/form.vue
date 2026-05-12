@@ -11,6 +11,9 @@ import { ElMessage } from "element-plus";
 import SvidConfig from "./components/SvidConfig.vue";
 import { formatConfigForDisplay as formatConfig } from "./utils/iniParser";
 import { stringifyINI, parseINI } from "../SensorTypePage/utils/iniParser";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
@@ -163,17 +166,17 @@ const loadSensorConfig = async (sensorType: string) => {
 // 保存配置编辑
 const saveSensorConfig = () => {
   try {
-    // 解析 INI 格式为 JSON 对象
     const configObj = parseINI(sensorConfigIniText.value);
     currentSensorConfig.value = configObj;
-
-    // 将配置保存到表单数据中（JSON 字符串格式）
     newFormInline.value.SensorConfigs = JSON.stringify(configObj);
-
     showEditSensorConfig.value = false;
-    ElMessage.success("配置保存成功");
+    ElMessage.success(t("sensorManage.sensorForm.sensorConfig.saveSuccess"));
   } catch (error) {
-    ElMessage.error("配置格式错误：" + (error as Error).message);
+    ElMessage.error(
+      t("sensorManage.sensorForm.sensorConfig.formatError") +
+        "：" +
+        (error as Error).message
+    );
   }
 };
 
@@ -264,29 +267,38 @@ defineExpose({ getRef });
     ref="ruleFormRef"
     :model="newFormInline"
     :rules="formRules"
-    label-width="120px"
+    label-width="140px"
+    class="sensor-form"
   >
     <!-- 基本信息 -->
     <el-divider content-position="left">
-      <span class="text-sm font-semibold">基本信息</span>
+      <span class="text-sm font-semibold">{{
+        t("sensorManage.sensorForm.basicInfo")
+      }}</span>
     </el-divider>
 
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form-item label="传感器名称" prop="SensorName">
+        <el-form-item
+          :label="t('sensorManage.sensorForm.sensorName')"
+          prop="SensorName"
+        >
           <el-input
             v-model="newFormInline.SensorName"
             clearable
-            placeholder="请输入传感器名称"
+            :placeholder="t('sensorManage.sensorForm.placeholder.sensorName')"
           />
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="传感器类型" prop="SensorType">
+        <el-form-item
+          :label="t('sensorManage.sensorForm.sensorType')"
+          prop="SensorType"
+        >
           <el-select
             v-model="newFormInline.SensorType"
             clearable
-            placeholder="请选择传感器类型"
+            :placeholder="t('sensorManage.sensorForm.placeholder.sensorType')"
             class="w-full"
             :loading="sensorTypeLoading"
           >
@@ -303,25 +315,34 @@ defineExpose({ getRef });
 
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form-item label="连接方式" prop="PortType">
+        <el-form-item
+          :label="t('sensorManage.sensorForm.portType')"
+          prop="PortType"
+        >
           <el-select
             v-model="newFormInline.PortType"
             clearable
-            placeholder="请选择连接方式"
+            :placeholder="t('sensorManage.sensorForm.placeholder.portType')"
             class="w-full"
           >
-            <el-option label="TCP/IP" value="TCP" />
-            <el-option label="串口" value="Serial" />
-            <el-option label="USB" value="USB" />
+            <el-option :label="t('sensorManage.sensorForm.tcp')" value="TCP" />
+            <el-option
+              :label="t('sensorManage.sensorForm.serial')"
+              value="Serial"
+            />
+            <el-option :label="t('sensorManage.sensorForm.usb')" value="USB" />
           </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="是否启用" prop="Enable">
+        <el-form-item
+          :label="t('sensorManage.sensorForm.enable')"
+          prop="Enable"
+        >
           <el-switch
             v-model="newFormInline.Enable"
-            active-text="启用"
-            inactive-text="停用"
+            :active-text="t('sensorManage.sensorForm.enableText')"
+            :inactive-text="t('sensorManage.sensorForm.disableText')"
           />
         </el-form-item>
       </el-col>
@@ -329,25 +350,30 @@ defineExpose({ getRef });
 
     <!-- 设备信息 -->
     <el-divider content-position="left">
-      <span class="text-sm font-semibold">设备信息</span>
+      <span class="text-sm font-semibold">{{
+        t("sensorManage.sensorForm.deviceInfo")
+      }}</span>
     </el-divider>
 
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form-item label="OPI编号" prop="WSID">
+        <el-form-item :label="t('sensorManage.sensorForm.wsid')" prop="WSID">
           <el-input
             v-model="newFormInline.WSID"
             clearable
-            placeholder="请输入OPI编号"
+            :placeholder="t('sensorManage.sensorForm.placeholder.wsid')"
           />
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="OPI位置" prop="Location">
+        <el-form-item
+          :label="t('sensorManage.sensorForm.location')"
+          prop="Location"
+        >
           <el-input
             v-model="newFormInline.Location"
             clearable
-            placeholder="请输入OPI位置"
+            :placeholder="t('sensorManage.sensorForm.placeholder.location')"
           />
         </el-form-item>
       </el-col>
@@ -355,20 +381,23 @@ defineExpose({ getRef });
 
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form-item label="机台编号" prop="EQPID">
+        <el-form-item :label="t('sensorManage.sensorForm.eqpid')" prop="EQPID">
           <el-input
             v-model="newFormInline.EQPID"
             clearable
-            placeholder="请输入机台编号"
+            :placeholder="t('sensorManage.sensorForm.placeholder.eqpid')"
           />
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="站点编号" prop="StationNo">
+        <el-form-item
+          :label="t('sensorManage.sensorForm.stationNo')"
+          prop="StationNo"
+        >
           <el-input-number
             v-model="newFormInline.StationNo"
             :min="0"
-            placeholder="请输入站点编号"
+            :placeholder="t('sensorManage.sensorForm.placeholder.stationNo')"
             class="w-full"
             controls-position="right"
           />
@@ -378,46 +407,60 @@ defineExpose({ getRef });
 
     <!-- 配置项开关 -->
     <el-divider content-position="left">
-      <span class="text-sm font-semibold">可选配置项</span>
+      <span class="text-sm font-semibold">{{
+        t("sensorManage.sensorForm.optionalConfig")
+      }}</span>
     </el-divider>
 
     <el-row :gutter="20" class="config-switches">
-      <el-col :span="6">
-        <el-form-item label="添加IP配置" label-width="120px">
+      <el-col :xs="24" :sm="12" :md="6">
+        <el-form-item
+          :label="t('sensorManage.sensorForm.switch.ipConfig')"
+          class="switch-item"
+        >
           <el-switch
             v-model="showIPConfig"
-            active-text="是"
-            inactive-text="否"
+            :active-text="t('sensorManage.sensorForm.switch.yes')"
+            :inactive-text="t('sensorManage.sensorForm.switch.no')"
             inline-prompt
           />
         </el-form-item>
       </el-col>
-      <el-col :span="6">
-        <el-form-item label="添加COM配置" label-width="120px">
+      <el-col :xs="24" :sm="12" :md="6">
+        <el-form-item
+          :label="t('sensorManage.sensorForm.switch.comConfig')"
+          class="switch-item"
+        >
           <el-switch
             v-model="showCOMConfig"
-            active-text="是"
-            inactive-text="否"
+            :active-text="t('sensorManage.sensorForm.switch.yes')"
+            :inactive-text="t('sensorManage.sensorForm.switch.no')"
             inline-prompt
           />
         </el-form-item>
       </el-col>
-      <el-col :span="6">
-        <el-form-item label="查看传感器配置" label-width="140px">
+      <el-col :xs="24" :sm="12" :md="6">
+        <el-form-item
+          :label="t('sensorManage.sensorForm.switch.sensorConfig')"
+          class="switch-item"
+        >
           <el-switch
             v-model="showSensorConfig"
-            active-text="是"
-            inactive-text="否"
+            :active-text="t('sensorManage.sensorForm.switch.yes')"
+            :inactive-text="t('sensorManage.sensorForm.switch.no')"
             inline-prompt
           />
         </el-form-item>
       </el-col>
-      <el-col :span="6">
-        <el-form-item label="添加SVID配置" label-width="140px">
+      <el-col :xs="24" :sm="12" :md="6">
+        <el-form-item
+          :label="t('sensorManage.sensorForm.switch.svidConfig')"
+          class="switch-item"
+        >
           <el-switch
             v-model="showSvidConfig"
-            active-text="是"
-            inactive-text="否"
+            :active-text="t('sensorManage.sensorForm.switch.yes')"
+            :inactive-text="t('sensorManage.sensorForm.switch.no')"
             inline-prompt
           />
         </el-form-item>
@@ -426,26 +469,37 @@ defineExpose({ getRef });
 
     <!-- IP 配置区域 -->
     <template v-if="showIPConfig">
-      <el-divider content-position="left">
-        <span class="text-sm font-semibold text-primary">IP 配置</span>
+      <el-divider content-position="left" class="config-divider">
+        <span class="text-sm font-semibold text-primary">
+          <el-icon class="mr-1"><Setting /></el-icon>
+          {{ t("sensorManage.sensorForm.ipConfig.title") }}
+        </span>
       </el-divider>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="IP地址" prop="IP">
+          <el-form-item
+            :label="t('sensorManage.sensorForm.ipConfig.ip')"
+            prop="IP"
+          >
             <el-input
               v-model="newFormInline.IP"
               clearable
-              placeholder="请输入IP地址（如：192.168.1.100）"
+              :placeholder="t('sensorManage.sensorForm.ipConfig.ipPlaceholder')"
             />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="端口号" prop="Port">
+          <el-form-item
+            :label="t('sensorManage.sensorForm.ipConfig.port')"
+            prop="Port"
+          >
             <el-input-number
               v-model="newFormInline.Port"
               :min="0"
               :max="65535"
-              placeholder="请输入端口号"
+              :placeholder="
+                t('sensorManage.sensorForm.ipConfig.portPlaceholder')
+              "
               class="w-full"
               controls-position="right"
             />
@@ -456,16 +510,24 @@ defineExpose({ getRef });
 
     <!-- COM 配置区域 -->
     <template v-if="showCOMConfig">
-      <el-divider content-position="left">
-        <span class="text-sm font-semibold text-primary">COM 配置</span>
+      <el-divider content-position="left" class="config-divider">
+        <span class="text-sm font-semibold text-primary">
+          <el-icon class="mr-1"><Setting /></el-icon>
+          {{ t("sensorManage.sensorForm.comConfig.title") }}
+        </span>
       </el-divider>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="COM口" prop="Com">
+          <el-form-item
+            :label="t('sensorManage.sensorForm.comConfig.com')"
+            prop="Com"
+          >
             <el-input
               v-model="newFormInline.Com"
               clearable
-              placeholder="请输入COM口（如：COM1）"
+              :placeholder="
+                t('sensorManage.sensorForm.comConfig.comPlaceholder')
+              "
             />
           </el-form-item>
         </el-col>
@@ -474,200 +536,286 @@ defineExpose({ getRef });
 
     <!-- 传感器配置区域 -->
     <template v-if="showSensorConfig">
-      <el-divider content-position="left">
-        <span class="text-sm font-semibold text-primary">传感器配置</span>
+      <el-divider content-position="left" class="config-divider">
+        <span class="text-sm font-semibold text-primary">
+          <el-icon class="mr-1"><Setting /></el-icon>
+          {{ t("sensorManage.sensorForm.sensorConfig.title") }}
+        </span>
       </el-divider>
 
       <div class="sensor-config-container">
-        <!-- 配置操作按钮 -->
-        <div class="config-actions mb-3">
-          <el-button
-            v-if="!showEditSensorConfig"
-            type="primary"
-            size="small"
-            @click="showEditSensorConfig = true"
-          >
-            编辑配置
-          </el-button>
-          <template v-else>
-            <el-button type="success" size="small" @click="saveSensorConfig">
-              保存配置
-            </el-button>
-            <el-button size="small" @click="cancelEditConfig"> 取消 </el-button>
-          </template>
+        <el-alert
+          v-if="!newFormInline.SensorType"
+          type="warning"
+          :closable="false"
+          show-icon
+          class="mb-3"
+        >
+          <template #title>{{
+            t("sensorManage.sensorForm.sensorConfig.noType")
+          }}</template>
+        </el-alert>
+
+        <div v-else-if="sensorConfigLoading" class="loading-container">
+          <el-icon class="is-loading" :size="24">
+            <Loading />
+          </el-icon>
+          <span class="ml-2">{{
+            t("sensorManage.sensorForm.sensorConfig.loading")
+          }}</span>
         </div>
 
-        <!-- 编辑模式：INI 文本编辑器 -->
-        <div v-if="showEditSensorConfig" class="config-editor">
-          <el-input
-            v-model="sensorConfigIniText"
-            type="textarea"
-            :rows="15"
-            placeholder="请输入配置内容，格式：
-key=value
-例如：
-unit=℃
-protocol=Modbus RTU
-min=-40
-max=125"
+        <div
+          v-else-if="Object.keys(currentSensorConfig).length === 0"
+          class="empty-container"
+        >
+          <el-empty
+            :description="t('sensorManage.sensorForm.sensorConfig.empty')"
+            :image-size="80"
           />
-          <el-alert type="info" :closable="false" class="mt-2">
-            <template #title>
-              <span class="text-xs">
-                配置格式为 key=value，保存后将转换为 JSON 格式存储
-              </span>
-            </template>
-          </el-alert>
         </div>
 
-        <!-- 查看模式：表格展示 -->
         <div v-else>
-          <el-descriptions :column="2" border size="small">
-            <el-descriptions-item
-              v-for="item in formatConfigForDisplay"
-              :key="item.key"
-              :label="item.label"
-              label-class-name="config-label"
+          <!-- 配置操作按钮 -->
+          <div class="config-actions">
+            <el-button
+              v-if="!showEditSensorConfig"
+              type="primary"
+              size="small"
+              @click="showEditSensorConfig = true"
             >
-              <el-tag
-                v-if="typeof item.value === 'boolean'"
-                :type="item.value ? 'success' : 'info'"
-                size="small"
-              >
-                {{ item.value ? "是" : "否" }}
-              </el-tag>
-              <el-tag
-                v-else-if="typeof item.value === 'number'"
-                type="warning"
-                size="small"
-              >
-                {{ item.value }}
-              </el-tag>
-              <span v-else class="config-value">{{ item.value }}</span>
-            </el-descriptions-item>
-          </el-descriptions>
-
-          <el-alert type="info" :closable="false" show-icon class="mt-3">
-            <template #title>
-              <span class="text-xs">
-                以上配置来自传感器类型管理。点击"编辑配置"可自定义此传感器的配置。
-              </span>
+              {{ t("sensorManage.sensorForm.sensorConfig.editBtn") }}
+            </el-button>
+            <template v-else>
+              <el-button type="success" size="small" @click="saveSensorConfig">
+                {{ t("sensorManage.sensorForm.sensorConfig.saveBtn") }}
+              </el-button>
+              <el-button size="small" @click="cancelEditConfig">
+                {{ t("sensorManage.sensorForm.sensorConfig.cancelBtn") }}
+              </el-button>
             </template>
-          </el-alert>
+          </div>
+
+          <!-- 编辑模式：INI 文本编辑器 -->
+          <div v-if="showEditSensorConfig" class="config-editor">
+            <el-input
+              v-model="sensorConfigIniText"
+              type="textarea"
+              :rows="15"
+              :placeholder="
+                t('sensorManage.sensorForm.sensorConfig.placeholder')
+              "
+            />
+            <el-alert type="info" :closable="false" class="mt-2">
+              <template #title>
+                <span class="text-xs">
+                  {{ t("sensorManage.sensorForm.sensorConfig.tip") }}
+                </span>
+              </template>
+            </el-alert>
+          </div>
+
+          <!-- 查看模式：表格展示 -->
+          <div v-else>
+            <el-descriptions :column="2" border size="small">
+              <el-descriptions-item
+                v-for="item in formatConfigForDisplay"
+                :key="item.key"
+                :label="item.label"
+                label-class-name="config-label"
+              >
+                <el-tag
+                  v-if="typeof item.value === 'boolean'"
+                  :type="item.value ? 'success' : 'info'"
+                  size="small"
+                >
+                  {{ item.value ? t("common.yes") : t("common.no") }}
+                </el-tag>
+                <el-tag
+                  v-else-if="typeof item.value === 'number'"
+                  type="warning"
+                  size="small"
+                >
+                  {{ item.value }}
+                </el-tag>
+                <span v-else class="config-value">{{ item.value }}</span>
+              </el-descriptions-item>
+            </el-descriptions>
+
+            <el-alert type="info" :closable="false" show-icon class="mt-3">
+              <template #title>
+                <span class="text-xs">
+                  {{ t("sensorManage.sensorForm.sensorConfig.reference") }}
+                </span>
+              </template>
+            </el-alert>
+          </div>
         </div>
       </div>
     </template>
 
     <!-- SVID 配置区域 -->
     <template v-if="showSvidConfig">
-      <el-divider content-position="left">
-        <span class="text-sm font-semibold text-primary">SVID 配置</span>
+      <el-divider content-position="left" class="config-divider">
+        <span class="text-sm font-semibold text-primary">
+          <el-icon class="mr-1"><Document /></el-icon>
+          {{ t("sensorManage.sensorForm.svidConfig.title") }}
+        </span>
       </el-divider>
       <div class="svid-config-container">
         <SvidConfig v-model="svidList" :station-no="newFormInline.StationNo" />
       </div>
+      <!-- 添加底部间距 -->
+      <div style="height: 20px" />
     </template>
   </el-form>
 </template>
 
 <style scoped lang="scss">
-:deep(.el-divider__text) {
-  background-color: var(--el-bg-color);
-  padding: 0 16px;
-  font-weight: 500;
-}
+.sensor-form {
+  padding: 16px;
+  max-height: calc(85vh - 120px); // 调整最大高度，预留底部空间
+  overflow-y: auto;
+  overflow-x: hidden; // 防止横向滚动
 
-:deep(.el-divider--horizontal) {
-  margin: 20px 0;
-}
-
-.config-switches {
-  :deep(.el-form-item) {
-    margin-bottom: 18px;
-  }
-}
-
-.sensor-config-container {
-  padding: 0 8px;
-
-  .loading-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 0;
-    color: var(--el-text-color-secondary);
+  // 美化滚动条
+  &::-webkit-scrollbar {
+    width: 8px;
   }
 
-  .empty-container {
-    padding: 20px 0;
-  }
-
-  .config-collapse {
-    border: 1px solid var(--el-border-color-lighter);
+  &::-webkit-scrollbar-track {
+    background: var(--el-fill-color-lighter);
     border-radius: 4px;
   }
 
-  :deep(.config-label) {
-    width: 35%;
-    background-color: var(--el-fill-color-light);
-    font-weight: 500;
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--el-border-color-dark);
+    border-radius: 4px;
+
+    &:hover {
+      background-color: var(--el-border-color-darker);
+    }
   }
 
-  .config-value {
-    color: var(--el-text-color-primary);
-    font-family: "Courier New", monospace;
+  :deep(.el-divider) {
+    margin: 24px 0 20px;
+  }
+
+  :deep(.el-divider__text) {
+    background-color: var(--el-bg-color);
+    padding: 0 16px;
+    font-weight: 600;
+  }
+
+  :deep(.el-form-item) {
+    margin-bottom: 22px;
+  }
+
+  // 配置项开关区域
+  .config-switches {
+    .switch-item {
+      :deep(.el-form-item__label) {
+        font-size: 13px;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  // 配置区域分割线
+  .config-divider {
+    margin-top: 32px !important;
+
+    .text-primary {
+      display: flex;
+      align-items: center;
+      color: var(--el-color-primary);
+    }
+  }
+
+  // 传感器配置容器
+  .sensor-config-container {
+    padding: 16px;
+    background-color: var(--el-fill-color-lighter);
+    border-radius: 4px;
+    margin-bottom: 16px;
+
+    .loading-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 0;
+      color: var(--el-text-color-secondary);
+    }
+
+    .empty-container {
+      padding: 20px 0;
+    }
+
+    .config-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background-color: var(--el-bg-color);
+      border-radius: 4px;
+    }
+
+    .config-editor {
+      :deep(.el-textarea__inner) {
+        font-family: "Courier New", monospace;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+    }
+
+    :deep(.config-label) {
+      width: 35%;
+      background-color: var(--el-fill-color-light);
+      font-weight: 500;
+    }
+
+    .config-value {
+      color: var(--el-text-color-primary);
+      font-family: "Courier New", monospace;
+    }
+  }
+
+  // SVID 配置容器
+  .svid-config-container {
+    padding: 16px;
+    background-color: var(--el-fill-color-lighter);
+    border-radius: 4px;
+    margin-bottom: 20px; // 增加底部间距
+    min-height: 400px; // 确保有足够高度显示内容
+  }
+
+  // 响应式调整
+  @media (max-width: 768px) {
+    max-height: calc(90vh - 100px);
+
+    .config-switches {
+      :deep(.el-col) {
+        margin-bottom: 12px;
+      }
+    }
   }
 }
 
-.svid-config-container {
-  padding: 0 8px;
+// 输入框聚焦效果
+:deep(.el-input__inner:focus),
+:deep(.el-textarea__inner:focus) {
+  border-color: var(--el-color-primary);
 }
 
-.section-title {
-  display: flex;
-  align-items: center;
+// Switch 样式优化
+:deep(.el-switch) {
+  height: 24px;
 }
 
-:deep(.el-collapse-item__header) {
-  font-weight: 500;
-  font-size: 14px;
-  height: 48px;
-  line-height: 48px;
-  padding-left: 16px;
-  background-color: var(--el-fill-color-light);
-  &:hover {
-    background-color: var(--el-fill-color-light);
-  }
-}
-
-:deep(.el-collapse-item__content) {
-  padding: 16px;
-}
-
+// 数字输入框优化
 :deep(.el-input-number) {
-  padding: 0 8px;
-  width: 100%;
-}
-
-.text-primary {
-  font-size: 14px;
-  color: var(--el-color-primary);
-  font-weight: 500;
-}
-
-.config-actions {
-  display: flex;
-  gap: 8px;
-  padding: 8px;
-  background-color: var(--el-fill-color-lighter);
-  border-radius: 4px;
-}
-
-.config-editor {
-  :deep(.el-textarea__inner) {
-    font-family: "Courier New", monospace;
-    font-size: 13px;
-    line-height: 1.6;
+  .el-input__inner {
+    text-align: left;
   }
 }
 </style>

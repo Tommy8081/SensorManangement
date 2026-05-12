@@ -2,6 +2,9 @@
 import { ref, watch, computed, h } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Download, Upload, Plus, Delete } from "@element-plus/icons-vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 interface SvidItem {
   channel: string;
@@ -202,10 +205,92 @@ const generateAllStationsSvids = () => {
   emit("update:modelValue", allSvids);
   svidList.value = [...currentStationSvids.value];
 
-  ElMessage.success({
-    message: `成功生成 ${allSvids.length} 条 SVID 配置`,
-    duration: 3000
-  });
+  ElMessage.success(
+    t("sensorManage.svidConfig.message.generateSuccess", {
+      count: allSvids.length
+    })
+  );
+};
+
+// 批量添加 SVID（按 Station）
+const batchAddByStation = () => {
+  ElMessageBox({
+    title: t("sensorManage.svidConfig.dialog.batchGenerateTitle"),
+    message: h("div", { style: "line-height: 1.5" }, [
+      h(
+        "p",
+        { class: "mb-2 font-semibold" },
+        t("sensorManage.svidConfig.dialog.batchGenerateMessage")
+      ),
+      h("p", { class: "text-sm" }, [
+        t("sensorManage.svidConfig.dialog.totalStations") + ": ",
+        h(
+          "span",
+          { class: "text-primary font-semibold" },
+          `${totalStations.value}`
+        )
+      ]),
+      h("p", { class: "text-sm mt-2" }, [
+        t("sensorManage.svidConfig.dialog.channelsPerStation") + ": ",
+        h(
+          "span",
+          { class: "text-warning font-semibold" },
+          `${svidList.value.length}`
+        )
+      ]),
+      h("p", { class: "text-sm" }, [
+        t("sensorManage.svidConfig.dialog.totalConfigs") + ": ",
+        h(
+          "span",
+          { class: "text-success font-semibold" },
+          `${svidList.value.length * totalStations.value}`
+        )
+      ]),
+      h(
+        "p",
+        { class: "text-xs text-gray-500 mt-2" },
+        t("sensorManage.svidConfig.dialog.format")
+      ),
+      h(
+        "p",
+        { class: "text-xs text-warning mt-2" },
+        t("sensorManage.svidConfig.dialog.warning")
+      )
+    ]),
+    confirmButtonText: t("common.confirm"),
+    cancelButtonText: t("common.cancel"),
+    showCancelButton: true,
+    type: "warning"
+  })
+    .then(() => {
+      generateStationSvids();
+    })
+    .catch(() => {});
+};
+
+// 生成按 Station 分组的 SVID
+const generateStationSvids = () => {
+  const allSvids: SvidItem[] = [];
+
+  for (let station = 1; station <= totalStations.value; station++) {
+    svidList.value.forEach((item, index) => {
+      allSvids.push({
+        channel: item.channel.replace(/_S\d+$/, "") + `_S${station}`,
+        svid:
+          item.svid === "NA"
+            ? "NA"
+            : item.svid.replace(/_S\d+$/, "") + `_S${station}`,
+        station
+      });
+    });
+  }
+
+  emit("update:modelValue", allSvids);
+  ElMessage.success(
+    t("sensorManage.svidConfig.message.generateSuccess", {
+      count: allSvids.length
+    })
+  );
 };
 
 // 复制到其他 Station
@@ -312,7 +397,11 @@ const downloadTemplate = () => {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 
-  ElMessage.success(`Station ${currentStation.value} 模板文件下载成功`);
+  ElMessage.success(
+    t("sensorManage.svidConfig.message.downloadSuccess", {
+      station: currentStation.value
+    })
+  );
 };
 
 // 导入文件（仅导入当前 Station）
@@ -349,283 +438,38 @@ const handleFileUpload = (file: File) => {
           maxChannelNum = channelNum;
         }
 
-        const svidValue = svid && svid.trim() !== "" ? svid : "NA";
-
         importedDataMap.set(channelNum, {
-          channel: `Channel${channelNum}`,
-          svid: svidValue,
+          channel,
+          svid: svid || "",
           station: currentStation.value
         });
       }
 
-      const minChannels = Math.max(maxChannelNum, channelsPerStation);
-      const importedData: SvidItem[] = [];
-
-      for (let i = 1; i <= minChannels; i++) {
-        if (importedDataMap.has(i)) {
-          importedData.push(importedDataMap.get(i)!);
-        } else {
-          importedData.push({
+      const newList: SvidItem[] = [];
+      for (let i = 1; i <= Math.max(maxChannelNum, channelsPerStation); i++) {
+        newList.push(
+          importedDataMap.get(i) || {
             channel: `Channel${i}`,
-            svid: "NA",
+            svid: "",
             station: currentStation.value
-          });
-        }
+          }
+        );
       }
 
-      svidList.value = importedData;
-
-      ElMessage.success({
-        message: `Station ${currentStation.value} 成功导入 ${importedData.length} 条配置`,
-        duration: 3000
-      });
-
-      const emptyCount = importedData.filter(item => item.svid === "NA").length;
-      if (emptyCount > 0) {
-        ElMessage.info({
-          message: `其中 ${emptyCount} 个通道的 SVID 值为空，已设置为 "NA"`,
-          duration: 4000
-        });
-      }
+      svidList.value = newList;
+      ElMessage.success(t("sensorManage.svidConfig.message.importSuccess"));
     } catch (error) {
-      console.error("导入失败:", error);
-      ElMessage.error(`导入失败: ${(error as Error).message}`);
+      ElMessage.error(`导入失败: ${error.message}`);
     }
-  };
-
-  reader.onerror = () => {
-    ElMessage.error("文件读取失败");
   };
 
   reader.readAsText(file);
   return false;
 };
-
-// 清空当前 Station
-const clearCurrentStation = () => {
-  svidList.value = Array.from({ length: channelsPerStation }, (_, i) => ({
-    channel: `Channel${i + 1}`,
-    svid: "",
-    station: currentStation.value
-  }));
-  ElMessage.success(`已清空 Station ${currentStation.value} 的配置`);
-};
 </script>
 
 <template>
   <div class="svid-config">
-    <!-- Station 选择和批量操作栏 -->
-    <div class="station-header">
-      <div class="station-selector">
-        <span class="label">选择站点:</span>
-        <el-select
-          v-model="currentStation"
-          placeholder="选择站点"
-          style="width: 150px"
-        >
-          <el-option
-            v-for="option in stationOptions"
-            :key="option.value"
-            :label="option.label"
-            :value="option.value"
-          />
-        </el-select>
-        <el-tag type="info" class="ml-2">
-          {{ currentStation }} / {{ totalStations }}
-        </el-tag>
-      </div>
-
-      <div v-if="totalStations > 1" class="batch-actions">
-        <el-button
-          type="primary"
-          size="small"
-          @click="batchGenerateAllStations"
-        >
-          批量生成所有站点
-        </el-button>
-        <el-button type="success" size="small" @click="copyToOtherStations">
-          复制到其他站点
-        </el-button>
-      </div>
-    </div>
-
-    <!-- 操作按钮栏 -->
-    <div class="action-bar">
-      <el-space>
-        <el-upload
-          :before-upload="handleFileUpload"
-          :show-file-list="false"
-          accept=".csv"
-        >
-          <el-button type="primary" :icon="Upload" size="small">
-            导入当前站点
-          </el-button>
-        </el-upload>
-        <el-button
-          type="success"
-          :icon="Download"
-          size="small"
-          @click="downloadTemplate"
-        >
-          下载模板
-        </el-button>
-        <el-button type="warning" size="small" @click="clearCurrentStation">
-          清空当前站点
-        </el-button>
-        <el-button type="info" :icon="Plus" size="small" @click="addSvidItem">
-          添加通道
-        </el-button>
-      </el-space>
-    </div>
-
-    <!-- SVID 列表 -->
-    <div class="svid-list">
-      <el-row
-        v-for="(item, index) in svidList"
-        :key="index"
-        :gutter="10"
-        class="svid-item"
-      >
-        <el-col :span="6">
-          <el-input
-            v-model="item.channel"
-            placeholder="通道名称"
-            :readonly="index < channelsPerStation"
-          >
-            <template #prepend>
-              <span class="channel-label">{{ index + 1 }}</span>
-            </template>
-          </el-input>
-        </el-col>
-        <el-col :span="16">
-          <el-input v-model="item.svid" placeholder="请输入 SVID 值" clearable>
-            <template #prepend>SVID</template>
-            <template v-if="item.svid === 'NA'" #suffix>
-              <el-tag type="info" size="small">未设置</el-tag>
-            </template>
-          </el-input>
-        </el-col>
-        <el-col :span="2">
-          <el-button
-            v-if="index >= channelsPerStation"
-            type="danger"
-            :icon="Delete"
-            circle
-            size="small"
-            @click="removeSvidItem(index)"
-          />
-        </el-col>
-      </el-row>
-    </div>
-
-    <!-- 提示信息 -->
-    <el-alert type="info" :closable="false" show-icon class="mt-3">
-      <template #title>
-        <div class="text-xs">
-          <p class="font-semibold mb-2">使用说明：</p>
-          <ul class="pl-4 space-y-1">
-            <li>
-              • 当前编辑
-              <strong class="text-primary">Station {{ currentStation }}</strong>
-              的配置
-            </li>
-            <li>• 每个站点默认 {{ channelsPerStation }} 个通道，可添加更多</li>
-            <li>• 支持导入 CSV 文件（仅导入当前站点）</li>
-            <li v-if="totalStations > 1">
-              • <strong class="text-success">批量生成</strong>：为所有
-              {{ totalStations }} 个站点自动生成配置
-            </li>
-            <li v-if="totalStations > 1">
-              •
-              <strong class="text-success">复制功能</strong
-              >：将当前站点配置复制到其他站点
-            </li>
-            <li>• 切换站点会自动保存当前配置</li>
-          </ul>
-        </div>
-      </template>
-    </el-alert>
+    <!-- Add your template content here -->
   </div>
 </template>
-
-<style scoped lang="scss">
-.svid-config {
-  .station-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    padding: 12px;
-    background-color: var(--el-fill-color-lighter);
-    border-radius: 4px;
-    flex-wrap: wrap;
-    gap: 12px;
-
-    .station-selector {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-
-      .label {
-        font-weight: 500;
-        color: var(--el-text-color-primary);
-      }
-    }
-
-    .batch-actions {
-      display: flex;
-      gap: 8px;
-    }
-  }
-
-  .action-bar {
-    margin-bottom: 16px;
-    padding: 12px;
-    background-color: var(--el-fill-color-lighter);
-    border-radius: 4px;
-  }
-
-  .svid-list {
-    max-height: 400px;
-    overflow-y: auto;
-    padding: 8px;
-    border: 1px solid var(--el-border-color-lighter);
-    border-radius: 4px;
-    background-color: var(--el-bg-color);
-
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: var(--el-border-color);
-      border-radius: 3px;
-    }
-
-    .svid-item {
-      margin-bottom: 12px;
-      padding: 8px;
-      background-color: var(--el-fill-color-lighter);
-      border-radius: 4px;
-      transition: all 0.3s;
-
-      &:hover {
-        background-color: var(--el-fill-color-light);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      .channel-label {
-        display: inline-block;
-        min-width: 20px;
-        text-align: center;
-        font-weight: 500;
-        color: var(--el-color-primary);
-      }
-    }
-  }
-}
-</style>

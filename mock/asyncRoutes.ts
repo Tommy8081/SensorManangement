@@ -183,7 +183,7 @@ const sensorManagementRouter = {
       component: "SensorManage/SensorTypePage/index",
       meta: {
         icon: "ep:setting",
-        title: "传感器类型管理",
+        title: "menus.pureSensorType",
         roles: ["admin"]
       }
     }

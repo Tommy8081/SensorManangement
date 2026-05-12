@@ -48,7 +48,8 @@ watch(
   <el-dialog
     :model-value="visible"
     :title="dialogTitle"
-    width="420px"
+    width="560px"
+    align-center
     draggable
     :close-on-click-modal="false"
     @update:model-value="emit('update:visible', $event)"
@@ -71,9 +72,12 @@ watch(
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button @click="closeDialog">取消</el-button>
+      <el-button class="dialog-btn cancel-btn" @click="closeDialog"
+        >取消</el-button
+      >
       <el-button
-        :type="action === 'approve' ? 'primary' : 'danger'"
+        class="dialog-btn confirm-btn"
+        type="primary"
         :loading="loading"
         @click="handleConfirm"
       >
@@ -82,3 +86,27 @@ watch(
     </template>
   </el-dialog>
 </template>
+
+<style lang="scss" scoped>
+.dialog-btn {
+  min-width: 112px;
+  height: 42px;
+  padding: 0 20px;
+  font-size: 15px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.cancel-btn {
+  background: #fff;
+  border-color: #dcdfe6;
+  color: #303133;
+
+  &:hover,
+  &:focus {
+    background: #fff;
+    border-color: #c0c4cc;
+    color: #303133;
+  }
+}
+</style>

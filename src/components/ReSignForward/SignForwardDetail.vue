@@ -85,10 +85,13 @@ function handleConfirm(reason: string) {
   <el-skeleton v-if="loading" :rows="10" animated class="sign-skeleton" />
   <div v-else-if="data" class="sign-detail-wrapper">
     <div class="sign-top">
-      <el-button link :icon="useRenderIcon(Back)" @click="emit('back')"
-        >返回</el-button
-      >
-      <span class="sign-number">传签单号: {{ data.proclnsId }}</span>
+      <el-button
+        link
+        :icon="useRenderIcon(Back)"
+        class="back-btn"
+        @click="emit('back')"
+      />
+      <span class="sign-number">{{ data.proclnsId }}</span>
     </div>
 
     <div class="sign-content">
@@ -109,8 +112,7 @@ function handleConfirm(reason: string) {
       <template v-if="!data.isHistory">
         <el-button
           :icon="useRenderIcon(Close)"
-          type="danger"
-          plain
+          class="reject-btn"
           @click="openDialog('disapprove')"
         >
           Disapprove
@@ -138,26 +140,43 @@ function handleConfirm(reason: string) {
 <style lang="scss" scoped>
 .sign-skeleton {
   padding: 24px;
+  background: #fff;
 }
 
 .sign-detail-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-height: 600px;
+  position: relative;
+  height: calc(100vh - 180px);
+  min-height: 520px;
+  max-height: calc(100vh - 180px);
+  box-sizing: border-box;
+  font-size: 15px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgb(0 0 0 / 8%);
+  overflow: hidden;
+  gap: 8px;
 
   .sign-top {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
-    height: 10%;
-    min-height: 60px;
-    padding: 0 24px;
-    background: var(--el-bg-color);
+    min-height: 52px;
+    padding: 0 18px;
     border-bottom: 1px solid var(--el-border-color-light);
 
+    .back-btn {
+      font-size: 22px;
+      color: var(--el-text-color-regular);
+
+      &:hover {
+        color: var(--el-color-primary);
+      }
+    }
+
     .sign-number {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
       color: var(--el-text-color-primary);
     }
@@ -170,27 +189,28 @@ function handleConfirm(reason: string) {
 
     .sign-left {
       flex: 2;
-      padding: 20px 24px;
+      padding: 18px 22px;
       overflow-y: auto;
       border-right: 1px solid var(--el-border-color-light);
     }
 
     .sign-right {
       display: flex;
-      flex: 1;
+      flex: 1.03;
       flex-direction: column;
       overflow: hidden;
+      margin-left: 12px;
 
       .sign-right-progress {
         flex: 1;
-        padding: 20px 16px;
+        padding: 16px 12px;
         overflow-y: auto;
         border-bottom: 1px solid var(--el-border-color-light);
       }
 
       .sign-right-flow {
         flex: 1;
-        padding: 20px 16px;
+        padding: 16px 12px;
         overflow-y: auto;
       }
     }
@@ -200,9 +220,35 @@ function handleConfirm(reason: string) {
     display: flex;
     gap: 12px;
     justify-content: flex-end;
-    padding: 12px 24px;
-    background: var(--el-bg-color);
-    border-top: 1px solid var(--el-border-color-light);
+    position: absolute;
+    right: 18px;
+    bottom: 24px;
+    padding: 0;
+    border-top: 0;
+    z-index: 2;
+    transform: none;
+
+    :deep(.el-button) {
+      min-width: 112px;
+      height: 42px;
+      padding: 0 20px;
+      font-size: 15px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    :deep(.reject-btn) {
+      background: #fff;
+      border-color: #dcdfe6;
+      color: #303133;
+
+      &:hover,
+      &:focus {
+        background: #fff;
+        border-color: #c0c4cc;
+        color: #303133;
+      }
+    }
   }
 }
 </style>

@@ -61,6 +61,9 @@ panel:
   pureHiddenFooter: Hide footer
   pureMultiTagsCache: Persistent tabs
 menus:
+  sensorManage: Sensor Management
+  sensorList: Sensor List
+  sensorType: Sensor Type
   pureHome: Home
   pureLogin: Login
   pureAbnormal: Abnormal page
@@ -84,6 +87,7 @@ menus:
   pureSystemLog: System logs
   pureSensorManage: Sensor Management
   pureSensorList: Sensor List
+  pureSensorType: Sensor Type
 status:
   pureLoad: Loading...
   pureMessage: Message
@@ -104,25 +108,14 @@ login:
 sensorManage:
   sensorList:
     title: Sensor List
-    searchForm:
+    search:
       sensorName: Sensor Name
       sensorType: Sensor Type
-      status: Status
-      search: Search
-      reset: Reset
-      sensorNamePlaceholder: Please enter sensor name
-      sensorTypePlaceholder: Please select sensor type
-      statusPlaceholder: Please select status
+      enable: Status
       enabled: Enabled
       disabled: Disabled
-    sensorType:
-      temperature: Temperature Sensor
-      humidity: Humidity Sensor
-      pressure: Pressure Sensor
-    portType:
-      tcp: TCP/IP
-      serial: Serial Port
-      usb: USB
+      searchBtn: Search
+      resetBtn: Reset
     table:
       sensorName: Sensor Name
       sensorType: Sensor Type
@@ -131,67 +124,280 @@ sensorManage:
       location: OPI Location
       eqpid: Equipment ID
       ip: IP Address
-      stationNo: Station Number
+      stationNo: Station No.
       port: Port
       com: COM Port
-      enable: Enable
-      lastUpdateUser: Last Update User
+      enable: Status
+      enabled: Enabled
+      disabled: Disabled
+      lastUpdateUser: Last Updated By
       lastUpdateTime: Last Update Time
       operation: Operation
-      enabled: Enable
-      disabled: Disable
     button:
       add: Add Sensor
+      view: View
       edit: Edit
       delete: Delete
     dialog:
       addTitle: Add Sensor
       editTitle: Edit Sensor
-    form:
-      sensorName: Sensor Name
-      sensorType: Sensor Type
-      portType: Connection Type
-      enable: Enable
-      wsid: OPI Number
-      location: OPI Location
-      eqpid: Equipment ID
-      ip: IP Address
-      stationNo: Station Number
-      port: Port
-      com: COM Port
-      sensorNamePlaceholder: Please enter sensor name
-      sensorTypePlaceholder: Please select sensor type
-      portTypePlaceholder: Please select connection type
-      wsidPlaceholder: Please enter OPI number
-      locationPlaceholder: Please enter OPI location
-      eqpidPlaceholder: Please enter equipment ID
-      ipPlaceholder: Please enter IP address
-      stationNoPlaceholder: Please enter station number
-      portPlaceholder: Please enter port number
-      comPlaceholder: Please enter COM port (e.g., COM1)
-    rules:
-      sensorNameRequired: Sensor name is required
-      sensorTypeRequired: Sensor type is required
-      portTypeRequired: Connection type is required
-      wsidRequired: OPI number is required
-      locationRequired: OPI location is required
-      eqpidRequired: Equipment ID is required
-      ipRequired: IP address is required
-      ipFormat: Please enter a valid IP address
-      stationNoRequired: Station number is required
-      portRequired: Port is required
-      portFormat: Port must be a number
+      viewTitle: View Sensor
     message:
-      confirmDelete: Are you sure to delete sensor {name}?
-      deleteSuccess: You deleted sensor {name}
-      addSuccess: You added sensor {name}
-      editSuccess: You updated sensor {name}
-      enableConfirm: Are you sure to enable sensor {name}?
-      disableConfirm: Are you sure to disable sensor {name}?
-      enableSuccess: Sensor {name} enabled
-      disableSuccess: Sensor {name} disabled
-      systemTip: System Tip
-      confirm: Confirm
-      cancel: Cancel
       enable: Enable
       disable: Disable
+      enableSuccess: Sensor {name} enabled
+      disableSuccess: Sensor {name} disabled
+      addSuccess: Sensor {name} added successfully
+      editSuccess: Sensor {name} updated successfully
+      deleteSuccess: Sensor {name} deleted successfully
+      confirm: Confirm
+      cancel: Cancel
+      systemTip: System Notification
+      noSvidList: No SVID list configured for this sensor
+      noStationNo: No station number configured for this sensor
+
+  # Sensor Form
+  sensorForm:
+    basicInfo: Basic Information
+    deviceInfo: Device Information
+    optionalConfig: Optional Configuration
+    sensorName: Sensor Name
+    sensorType: Sensor Type
+    portType: Connection Type
+    enable: Enable
+    wsid: OPI Number
+    location: OPI Location
+    eqpid: Equipment ID
+    stationNo: Station No.
+    tcp: TCP/IP
+    serial: Serial
+    usb: USB
+    enableText: Enabled
+    disableText: Disabled
+    placeholder:
+      sensorName: Enter sensor name
+      sensorType: Select sensor type
+      portType: Select connection type
+      wsid: Enter OPI number
+      location: Enter OPI location
+      eqpid: Enter equipment ID
+      stationNo: Enter station number
+    switch:
+      ipConfig: Add IP Configuration
+      comConfig: Add COM Configuration
+      sensorConfig: View Sensor Configuration
+      svidConfig: Add SVID Configuration
+      yes: Yes
+      no: No
+    ipConfig:
+      title: IP Configuration
+      ip: IP Address
+      port: Port Number
+      ipPlaceholder: Enter IP address (e.g., 192.168.1.100)
+      portPlaceholder: Enter port number
+    comConfig:
+      title: COM Configuration
+      com: COM Port
+      comPlaceholder: Enter COM port (e.g., COM1)
+    sensorConfig:
+      title: Sensor Configuration
+      editBtn: Edit Configuration
+      saveBtn: Save Configuration
+      cancelBtn: Cancel
+      saveSuccess: Configuration saved successfully
+      formatError: Configuration format error
+      placeholder: |
+        Enter configuration in format:
+        key=value
+        Example:
+        unit=℃
+        protocol=Modbus RTU
+        min=-40
+        max=125
+      tip: Configuration format is key=value, will be converted to JSON when saved
+      reference: Configuration from sensor type management. Click "Edit Configuration" to customize.
+      noType: Please select sensor type first to load configuration
+      loading: Loading configuration...
+      empty: No configuration information for this sensor type
+    svidConfig:
+      title: SVID Configuration
+
+  # SVID Configuration
+  svidConfig:
+    stationInfo: Current configured stations
+    totalStations: Total Stations
+    batchGenerate: Batch Generate SVID
+    selectStation: Select Station
+    currentStation: Station {current}/{total}
+    actions:
+      import: Import Current Station
+      download: Download Template
+      clear: Clear Current Station
+      add: Add Channel
+      batchGenerate: Batch Generate All Stations
+      copyToOther: Copy to Other Stations
+    channel: Channel Name
+    svid: SVID
+    notSet: Not Set
+    tips:
+      title: "Instructions:"
+      currentStation: "Currently editing Station {station} configuration"
+      defaultChannels: "Each station defaults to {count} channels, more can be added"
+      importCsv: "Supports importing CSV files (current station only)"
+      batchGenerate: "Batch Generate: Automatically generate configuration for all {total} stations"
+      copyFunction: "Copy Function: Copy current station configuration to other stations"
+      autoSwitch: "Switching stations automatically saves current configuration"
+    dialog:
+      batchGenerateTitle: Batch Generate SVID
+      batchGenerateMessage: Will generate complete SVID configuration for all stations
+      totalStations: Total Stations
+      channelsPerStation: Channels per Station
+      totalConfigs: Total Configurations
+      format: 'Format: Channel{n}_S{station} = SVID{n}_S{station}'
+      warning: ⚠️ This will overwrite all existing configurations
+      copyTitle: Copy to Other Stations
+      copyMessage: Copy configuration from Station {station} to all other stations
+      currentChannels: Current Channels
+      copyTo: Will copy to
+      otherStations: other stations
+      copyWarning: ⚠️ This will overwrite configurations in other stations
+    message:
+      generateSuccess: Successfully generated {count} SVID configurations
+      copySuccess: Configuration copied to all {count} stations
+      importSuccess: Station {station} successfully imported {count} configurations
+      emptyChannels: '{count} channels have empty SVID values, set to "NA"'
+      clearSuccess: Cleared Station {station} configuration
+      downloadSuccess: Station {station} template downloaded successfully
+      importError: Import failed
+      noChannels: Station {station} has no SVID configuration
+      minChannels: Must keep at least {count} channel configurations
+
+  # SVID Data Viewer
+  svidViewer:
+    title: SVID Data Viewer
+    totalStations: Total Stations
+    currentStationCount: Current Station SVID Count
+    selectStation: Select Station
+    queryBtn: Query Data
+    waitBtn: Wait {time}s
+    table:
+      index: '#'
+      channel: Channel
+      svid: SVID
+      status: Status
+      value: Data Value
+      updateTime: Update Time
+      statusNormal: Normal
+      statusError: Failed
+      statusLoading: Not Queried
+      noData: No Data
+    message:
+      querySuccess: Station {station} data queried successfully
+      queryError: Data query failed
+      wait: Please wait {time} seconds before querying again
+      noConfig: Station {station} has no SVID list configured
+    tips:
+      title: "Tips:"
+      currentView: Currently viewing Station {current}/{total} data
+      totalCount: This station has {count} SVIDs
+      rateLimit: Limited to one query every 5 seconds to avoid frequent queries
+      switchStation: Switching stations will reinitialize data, requires re-query
+      naSkip: Channels with SVID value "NA" will not be queried
+
+  # Sensor Type Management
+  sensorType:
+    title: Sensor Type List
+    search:
+      sensorType: Sensor Type
+      searchBtn: Search
+      resetBtn: Reset
+    table:
+      sensorType: Sensor Type
+      sensorDesc: Sensor Description
+      sensorConfigs: Sensor Configuration
+      createTime: Create Time
+      updateTime: Update Time
+      operation: Operation
+    button:
+      add: Add Type
+      view: View Configuration
+      edit: Edit
+      delete: Delete
+    dialog:
+      addTitle: Add Sensor Type
+      editTitle: Edit Sensor Type
+      viewTitle: View Sensor Configuration
+    form:
+      sensorType: Sensor Type
+      sensorDesc: Sensor Description
+      sensorConfigs: Sensor Configuration
+      placeholder:
+        sensorType: Enter sensor type (e.g., Temperature)
+        sensorDesc: Enter sensor description (e.g., Temperature Sensor)
+        sensorConfigs: |
+          Enter configuration in INI format
+          Example:
+          unit=℃
+          protocol=Modbus RTU
+          min=-40
+          max=125
+      actions:
+        insertExample: Insert Example Template
+        validate: Validate Format
+      tips:
+        title: "Tips:"
+        format: Use key=value format to define configuration items
+        comment: Supports comments (lines starting with ; or #)
+        oneLine: One configuration item per line
+    message:
+      addSuccess: Sensor type {type} added successfully
+      editSuccess: Sensor type {type} updated successfully
+      deleteSuccess: Sensor type {type} deleted
+      deleteConfirm: Confirm deletion of sensor type "{type}"?
+      validateSuccess: Configuration format validated successfully
+      validateError: Configuration format error
+
+  # Configuration Label Mapping
+  configLabels:
+    unit: Unit
+    min: Minimum
+    max: Maximum
+    accuracy: Accuracy
+    protocol: Protocol
+    baudRate: Baud Rate
+    dataBits: Data Bits
+    stopBits: Stop Bits
+    parity: Parity
+    address: Device Address
+    timeout: Timeout
+    interval: Interval
+    host: Host Address
+    port: Port Number
+    ip: IP Address
+    sensorModel: Sensor Model
+    manufacturer: Manufacturer
+    calibrationDate: Calibration Date
+    enable: Enable Status
+    description: Description
+
+# Common
+common:
+  confirm: Confirm
+  cancel: Cancel
+  save: Save
+  edit: Edit
+  delete: Delete
+  add: Add
+  search: Search
+  reset: Reset
+  view: View
+  close: Close
+  loading: Loading...
+  yes: Yes
+  no: No
+  success: Success
+  error: Error
+  warning: Warning
+  info: Info
+  sensor: Sensor
+  type: Type
