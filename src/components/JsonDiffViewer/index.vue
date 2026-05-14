@@ -1,32 +1,39 @@
 <template>
   <div class="json-diff-viewer">
-    <!-- Title Header -->
-    <div class="diff-header">
-      <div class="diff-header-before">
-        <span class="header-dot dot-removed"></span>
-        {{ beforeTitle }}
-      </div>
-      <div class="diff-header-after">
-        <span class="header-dot dot-added"></span>
-        {{ afterTitle }}
-      </div>
-    </div>
-
     <div v-if="diffLines.length === 0" class="no-diff">
       <span>无变更</span>
     </div>
 
-    <!-- Split view table -->
     <table v-else class="diff-table">
       <colgroup>
-        <col class="col-indicator" />
-        <col class="col-key" />
-        <col class="col-value-before" />
-        <col class="col-divider" />
-        <col class="col-value-after" />
+        <!-- indicator -->
+        <col style="width: 32px" />
+        <!-- key -->
+        <col style="width: 180px" />
+        <!-- before value -->
+        <col style="width: calc((100% - 32px - 180px - 40px) / 2)" />
+        <!-- divider -->
+        <col style="width: 40px" />
+        <!-- after value -->
+        <col style="width: calc((100% - 32px - 180px - 40px) / 2)" />
       </colgroup>
-      <thead class="diff-col-header">
-        <tr>
+
+      <thead>
+        <!-- ① Title row: aligned to columns -->
+        <tr class="diff-title-row">
+          <th colspan="2" class="title-spacer"></th>
+          <th class="title-before">
+            <span class="header-dot dot-removed"></span>
+            {{ beforeTitle }}
+          </th>
+          <th class="title-divider-spacer"></th>
+          <th class="title-after">
+            <span class="header-dot dot-added"></span>
+            {{ afterTitle }}
+          </th>
+        </tr>
+        <!-- ② Sub-header row -->
+        <tr class="diff-col-header">
           <th></th>
           <th class="col-header-key">字段</th>
           <th class="col-header-before">修改前</th>
@@ -34,9 +41,10 @@
           <th class="col-header-after">修改后</th>
         </tr>
       </thead>
+
       <tbody>
         <template v-for="(line, idx) in visibleLines" :key="idx">
-          <!-- Section Header (nested object path) -->
+          <!-- Section Header -->
           <tr v-if="line.type === 'section'" class="diff-section-row">
             <td colspan="5" class="diff-section">
               <span class="section-icon">▸</span>
@@ -81,7 +89,7 @@
 
           <!-- Unchanged -->
           <tr v-else-if="line.type === 'unchanged'" class="diff-row diff-unchanged">
-            <td class="diff-indicator"> </td>
+            <td class="diff-indicator"></td>
             <td class="diff-key">{{ line.key }}</td>
             <td class="diff-value side-before">{{ formatValue(line.oldValue) }}</td>
             <td class="col-divider-cell"></td>
@@ -113,13 +121,9 @@ interface DiffLine {
 interface Props {
   beforeValue: string | Record<string, unknown>
   afterValue: string | Record<string, unknown>
-  /** 修改前的标题，默认「修改前」 */
   beforeTitle?: string
-  /** 修改后的标题，默认「修改后」 */
   afterTitle?: string
-  /** 是否显示切换未变更字段的按钮，默认 true */
   showUnchangedToggle?: boolean
-  /** 初始是否展示未变更字段，默认 false */
   defaultShowUnchanged?: boolean
 }
 
@@ -161,7 +165,6 @@ function collectDiff(
   lines: DiffLine[],
 ) {
   const allKeys = new Set([...Object.keys(before), ...Object.keys(after)])
-
   for (const key of allKeys) {
     const hasOld = Object.prototype.hasOwnProperty.call(before, key)
     const hasNew = Object.prototype.hasOwnProperty.call(after, key)
@@ -171,14 +174,14 @@ function collectDiff(
 
     if (!hasOld) {
       if (isObject(newVal)) {
-        lines.push({ type: 'section', key, path: currentPath, newValue: newVal })
+        lines.push({ type: 'section', key, path: currentPath })
         collectDiff({}, newVal as Record<string, unknown>, currentPath, lines)
       } else {
         lines.push({ type: 'added', key, path: currentPath, newValue: newVal })
       }
     } else if (!hasNew) {
       if (isObject(oldVal)) {
-        lines.push({ type: 'section', key, path: currentPath, oldValue: oldVal })
+        lines.push({ type: 'section', key, path: currentPath })
         collectDiff(oldVal as Record<string, unknown>, {}, currentPath, lines)
       } else {
         lines.push({ type: 'removed', key, path: currentPath, oldValue: oldVal })
@@ -222,76 +225,84 @@ const visibleLines = computed(() =>
   background: #fff;
 }
 
-/* ── Top title header ───────────────────────── */
-.diff-header {
-  display: flex;
-  border-bottom: 1px solid #e1e4e8;
-}
-.diff-header-before,
-.diff-header-after {
-  flex: 1;
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.diff-header-before {
-  background: #fff5f5;
-  color: #86181d;
-  border-right: 2px solid #e1e4e8;
-}
-.diff-header-after {
-  background: #f0fff4;
-  color: #165c26;
-}
-.header-dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.dot-removed { background: #cb2431; }
-.dot-added   { background: #22863a; }
-
-/* ── Table ────────────────────────────────── */
 .no-diff {
   padding: 16px;
   color: #6a737d;
   text-align: center;
 }
 
+/* ── Table base ── */
 .diff-table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
 }
 
-.col-indicator   { width: 32px; }
-.col-key         { width: 160px; }
-.col-divider     { width: 36px; }
-.col-value-before,
-.col-value-after { width: auto; }
+/* ── Title row (row 1 of thead) ── */
+.diff-title-row th {
+  padding: 0;
+  border-bottom: 1px solid #e1e4e8;
+}
+.title-spacer {
+  background: #fafbfc;
+  border-right: 1px solid #e1e4e8;
+}
+.title-before,
+.title-after {
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  display: table-cell; /* th default */
+  vertical-align: middle;
+}
+.title-before {
+  background: #fff5f5;
+  color: #86181d;
+  border-right: 1px solid #e1e4e8;
+}
+.title-after {
+  background: #f0fff4;
+  color: #165c26;
+}
+.title-divider-spacer {
+  background: #f6f8fa;
+  border-left: 1px solid #e1e4e8;
+  border-right: 1px solid #e1e4e8;
+}
 
-/* Column sub-header */
+.header-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.dot-removed { background: #cb2431; }
+.dot-added   { background: #22863a; }
+
+/* ── Sub-header row (row 2 of thead) ── */
 .diff-col-header th {
-  padding: 4px 8px;
+  padding: 3px 8px;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  border-bottom: 1px solid #e1e4e8;
-  background: #fafbfc;
+  border-bottom: 2px solid #e1e4e8;
   color: #6a737d;
+  background: #fafbfc;
 }
-.col-header-key     { padding-left: 16px !important; }
-.col-header-before  { background: #fff8f8; color: #cb2431; }
-.col-header-after   { background: #f6fff8; color: #22863a; }
-.col-header-divider { background: #fafbfc; }
+.col-header-key    { padding-left: 12px !important; }
+.col-header-before { background: #fff8f8; color: #cb2431; }
+.col-header-after  { background: #f6fff8; color: #22863a; }
+.col-header-divider {
+  background: #f6f8fa;
+  border-left: 1px solid #e1e4e8;
+  border-right: 1px solid #e1e4e8;
+}
 
-/* ── Diff rows ──────────────────────────────── */
+/* ── Section header ── */
 .diff-section-row { background: #f1f8ff; }
 .diff-section {
   padding: 4px 12px;
@@ -303,6 +314,7 @@ const visibleLines = computed(() =>
 }
 .section-icon { margin-right: 4px; opacity: 0.7; }
 
+/* ── Diff rows ── */
 .diff-row td {
   padding: 4px 8px;
   vertical-align: middle;
@@ -316,44 +328,43 @@ const visibleLines = computed(() =>
   font-weight: bold;
   user-select: none;
 }
+
 .diff-key {
   color: #24292e;
   font-weight: 500;
-  padding-left: 16px !important;
+  padding-left: 12px !important;
 }
+
 .col-divider-cell {
   text-align: center;
   background: #f6f8fa;
   border-left: 1px solid #e1e4e8;
   border-right: 1px solid #e1e4e8;
+  color: #586069;
 }
 
 /* Removed */
-.diff-removed                  { background-color: #ffeef0; }
-.diff-removed .diff-indicator  { color: #cb2431; }
-.diff-removed .diff-key        { color: #86181d; }
-.diff-removed .side-before     { background: #ffdce0; }
-.diff-removed .side-after      { background: #ffeef0; }
+.diff-removed .diff-indicator { color: #cb2431; }
+.diff-removed .diff-key       { color: #86181d; }
+.diff-removed .side-before    { background: #ffdce0; }
+.diff-removed .side-after     { background: #ffeef0; }
 
 /* Added */
-.diff-added                    { background-color: #e6ffed; }
-.diff-added .diff-indicator    { color: #22863a; }
-.diff-added .diff-key          { color: #165c26; }
-.diff-added .side-before       { background: #e6ffed; }
-.diff-added .side-after        { background: #cdffd8; }
+.diff-added .diff-indicator { color: #22863a; }
+.diff-added .diff-key       { color: #165c26; }
+.diff-added .side-before    { background: #e6ffed; }
+.diff-added .side-after     { background: #cdffd8; }
 
 /* Modified */
-.diff-modified                 { background-color: #fffbdd; }
 .diff-modified .diff-indicator { color: #b08800; }
 .diff-modified .diff-key       { color: #735c0f; }
 .diff-modified .side-before    { background: #fff5b1; }
-.diff-modified .side-after     { background: #e6ffed; }
+.diff-modified .side-after     { background: #dcffe4; }
 
 /* Unchanged */
-.diff-unchanged                { background-color: #fff; color: #6a737d; }
-.diff-unchanged .diff-indicator{ color: #d1d5da; }
+.diff-unchanged .diff-indicator { color: #d1d5da; }
 .diff-unchanged .side-before,
-.diff-unchanged .side-after    { color: #6a737d; }
+.diff-unchanged .side-after     { color: #6a737d; background: #fff; }
 
 /* Value tags */
 .value-tag {
@@ -373,9 +384,9 @@ const visibleLines = computed(() =>
   color: #165c26;
 }
 
-.arrow { color: #586069; font-size: 14px; }
+.arrow { font-size: 14px; }
 
-/* Toggle button */
+/* Toggle */
 .toggle-bar {
   border-top: 1px solid #e1e4e8;
   padding: 8px 12px;
