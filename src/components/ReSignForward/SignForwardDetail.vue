@@ -91,7 +91,7 @@ function handleConfirm(reason: string) {
         class="back-btn"
         @click="emit('back')"
       />
-      <span class="sign-number">{{ data.proclnsId }}</span>
+      <span class="sign-number">{{ data.ORDER_NO }}</span>
     </div>
 
     <div class="sign-content">
@@ -144,19 +144,19 @@ function handleConfirm(reason: string) {
 }
 
 .sign-detail-wrapper {
+  position: relative;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  position: relative;
+  gap: 8px;
   height: calc(100vh - 180px);
   min-height: 520px;
   max-height: calc(100vh - 180px);
-  box-sizing: border-box;
+  overflow: hidden;
   font-size: 15px;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 1px 6px rgb(0 0 0 / 8%);
-  overflow: hidden;
-  gap: 8px;
 
   .sign-top {
     display: flex;
@@ -198,8 +198,8 @@ function handleConfirm(reason: string) {
       display: flex;
       flex: 1.03;
       flex-direction: column;
-      overflow: hidden;
       margin-left: 12px;
+      overflow: hidden;
 
       .sign-right-progress {
         flex: 1;
@@ -217,15 +217,15 @@ function handleConfirm(reason: string) {
   }
 
   .sign-bottom {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
     position: absolute;
     right: 18px;
     bottom: 24px;
+    z-index: 2;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
     padding: 0;
     border-top: 0;
-    z-index: 2;
     transform: none;
 
     :deep(.el-button) {
@@ -233,20 +233,20 @@ function handleConfirm(reason: string) {
       height: 42px;
       padding: 0 20px;
       font-size: 15px;
-      border-radius: 8px;
       font-weight: 600;
+      border-radius: 8px;
     }
 
     :deep(.reject-btn) {
+      color: #303133;
       background: #fff;
       border-color: #dcdfe6;
-      color: #303133;
 
       &:hover,
       &:focus {
+        color: #303133;
         background: #fff;
         border-color: #c0c4cc;
-        color: #303133;
       }
     }
   }

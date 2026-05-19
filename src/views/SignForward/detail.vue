@@ -13,7 +13,7 @@ defineOptions({
 
 const route = useRoute();
 const router = useRouter();
-const proclnsId = route.query.proclnsId as string;
+const ORDER_NO = route.query.ORDER_NO as string;
 const isHistory = route.query.isHistory === "1";
 
 const detailData = ref<SignForwardDetailData | null>(null);
@@ -22,7 +22,7 @@ const loading = ref(false);
 async function loadDetail() {
   loading.value = true;
   try {
-    const res = await getSignOffDetail({ proclnsId });
+    const res = await getSignOffDetail({ ORDER_NO });
     const data = (res as any)?.data ?? res;
     detailData.value = {
       ...data,
@@ -40,7 +40,7 @@ async function handleApprove(reason: string) {
     await actionSignForward({
       action: "Approve",
       fromAccount: useUserStoreHook().username,
-      proclnsId,
+      proclnsId: ORDER_NO,
       remark: reason,
       toAccount: ""
     });
@@ -56,7 +56,7 @@ async function handleDisapprove(reason: string) {
     await actionSignForward({
       action: "Disapprove",
       fromAccount: useUserStoreHook().username,
-      proclnsId,
+      proclnsId: ORDER_NO,
       remark: reason,
       toAccount: ""
     });
