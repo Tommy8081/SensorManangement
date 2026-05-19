@@ -8,14 +8,18 @@ export function useSignForwardList() {
   const historyList = ref<SignForwardItem[]>([]);
   const pendingLoading = ref(false);
   const historyLoading = ref(false);
-  const pageNo = 1;
-  const pageSize = 20;
+  const pageNo = ref(1);
+  const pageSize = ref(20);
 
   async function loadPending() {
     pendingLoading.value = true;
     try {
       const userAccount = useUserStoreHook().username;
-      const res = await getSignOffList({ userAccount, pageNo, pageSize });
+      const res = await getSignOffList({
+        userAccount,
+        pageNo: pageNo.value,
+        pageSize: pageSize.value
+      });
       const data = (res as any)?.data ?? res;
       const raw = Array.isArray(data?.list) ? data.list : [];
       pendingList.value = raw.map((item: any) =>
@@ -42,8 +46,8 @@ export function useSignForwardList() {
       const userAccount = useUserStoreHook().username;
       const res = await getSignOffHistoryList({
         userAccount,
-        pageNo,
-        pageSize
+        pageNo: pageNo.value,
+        pageSize: pageSize.value
       });
       const data = (res as any)?.data ?? res;
       const raw = Array.isArray(data?.list) ? data.list : [];
