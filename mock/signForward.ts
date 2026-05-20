@@ -31,91 +31,173 @@ const applicantNamePool = [
   "郑十"
 ];
 
-// 每种变更场景的 before/after JSON 对象模板
+// 每种变更场景的 before/after JSON 对象模板（与真实 API 字段对齐）
 const changeScenarios = [
   {
-    description: "传感器 IP 地址变更",
+    description: "FOR TEST - SENSORTYPE 变更",
     before: {
-      ip: "192.168.1.100",
-      port: 502,
-      protocol: "Modbus-TCP",
-      enabled: true,
-      sampleInterval: 5
+      SENSORTYPE: "TESTS",
+      SENSORDESC: "TEST",
+      SENSOREXE: "NSANO",
+      REASON: "FOR TEST2",
+      SENSORCONFIGS: "",
+      ConfigEnable: false
     },
     after: {
-      ip: "192.168.1.200",
-      port: 502,
-      protocol: "Modbus-TCP",
-      enabled: true,
-      sampleInterval: 5
+      SENSORTYPE: "TEST",
+      SENSORDESC: "TEST",
+      SENSOREXE: "",
+      REASON: "FOR TEST",
+      SENSORCONFIGS: "",
+      ConfigEnable: false
     }
   },
   {
-    description: "串口号及波特率变更",
+    description: "传感器执行程序及启用状态变更",
     before: {
-      port: "COM3",
-      baudRate: 9600,
-      dataBits: 8,
-      stopBits: 1,
-      parity: "none"
+      SENSORTYPE: "PRESSURE",
+      SENSORDESC: "压力传感器-A区",
+      SENSOREXE: "pressure_v1.exe",
+      REASON: "旧版程序兼容性问题",
+      SENSORCONFIGS: {
+        interval: 5,
+        unit: "kPa",
+        precision: 0.01,
+        protocol: "Modbus",
+        reportMode: "realtime",
+        alarmEnabled: false,
+        alarmThreshold: 200,
+        alarmHysteresis: 5
+      },
+      ConfigEnable: true
     },
     after: {
-      port: "COM5",
-      baudRate: 115200,
-      dataBits: 8,
-      stopBits: 1,
-      parity: "none"
+      SENSORTYPE: "PRESSURE",
+      SENSORDESC: "压力传感器-A区",
+      SENSOREXE: "pressure_v2.exe",
+      REASON: "升级采集程序至 v2，支持新协议",
+      SENSORCONFIGS: {
+        interval: 5,
+        unit: "kPa",
+        precision: 0.01,
+        protocol: "Modbus",
+        reportMode: "realtime",
+        alarmEnabled: true,
+        alarmThreshold: 200,
+        alarmHysteresis: 5
+      },
+      ConfigEnable: true
     }
   },
   {
-    description: "传感器类型与量程变更",
+    description: "传感器描述与配置项变更",
     before: {
-      sensorType: "Temperature",
-      unit: "°C",
-      rangeMin: -40,
-      rangeMax: 85,
-      precision: 0.1
+      SENSORTYPE: "TEMPERATURE",
+      SENSORDESC: "温度探头-机房01",
+      SENSOREXE: "temp_reader.exe",
+      REASON: "初始部署",
+      SENSORCONFIGS: {
+        rangeMin: -20,
+        rangeMax: 80,
+        precision: 0.5,
+        protocol: "RS485",
+        baudRate: 9600,
+        dataBits: 8,
+        stopBits: 1,
+        parity: "none",
+        reportInterval: 30
+      },
+      ConfigEnable: true
     },
     after: {
-      sensorType: "Humidity",
-      unit: "%RH",
-      rangeMin: 0,
-      rangeMax: 100,
-      precision: 0.5
+      SENSORTYPE: "TEMPERATURE",
+      SENSORDESC: "温度探头-机房01（备用）",
+      SENSOREXE: "temp_reader.exe",
+      REASON: "主探头故障，切换至备用探头",
+      SENSORCONFIGS: {
+        rangeMin: -40,
+        rangeMax: 100,
+        precision: 0.1,
+        protocol: "RS485",
+        baudRate: 9600,
+        dataBits: 8,
+        stopBits: 1,
+        parity: "none",
+        reportInterval: 30
+      },
+      ConfigEnable: true
     }
   },
   {
-    description: "采样频率与上报策略变更",
+    description: "传感器禁用申请",
     before: {
-      sampleRate: 1,
-      reportMode: "period",
-      reportInterval: 60,
-      alarmEnabled: false,
-      alarmThreshold: null
+      SENSORTYPE: "HUMIDITY",
+      SENSORDESC: "湿度传感器-B栋",
+      SENSOREXE: "humidity_svc.exe",
+      REASON: "",
+      SENSORCONFIGS: {
+        reportMode: "period",
+        interval: 60,
+        unit: "%RH",
+        rangeMin: 0,
+        rangeMax: 100,
+        alarmEnabled: true,
+        alarmHigh: 85,
+        alarmLow: 10
+      },
+      ConfigEnable: true
     },
     after: {
-      sampleRate: 10,
-      reportMode: "threshold",
-      reportInterval: 10,
-      alarmEnabled: true,
-      alarmThreshold: 80
+      SENSORTYPE: "HUMIDITY",
+      SENSORDESC: "湿度传感器-B栋",
+      SENSOREXE: "humidity_svc.exe",
+      REASON: "设备进入年度维护，暂停采集",
+      SENSORCONFIGS: {
+        reportMode: "period",
+        interval: 60,
+        unit: "%RH",
+        rangeMin: 0,
+        rangeMax: 100,
+        alarmEnabled: true,
+        alarmHigh: 85,
+        alarmLow: 10
+      },
+      ConfigEnable: false
     }
   },
   {
-    description: "设备标签与位置信息变更",
+    description: "传感器类型与执行程序全量更换",
     before: {
-      label: "传感器-A01",
-      location: "一楼机房",
-      building: "A栋",
-      floor: 1,
-      remark: ""
+      SENSORTYPE: "FLOW",
+      SENSORDESC: "流量计-主管道",
+      SENSOREXE: "flow_old.exe",
+      REASON: "原设备损坏",
+      SENSORCONFIGS: {
+        unit: "m3/h",
+        maxFlow: 500,
+        alarmThreshold: 450,
+        protocol: "4-20mA",
+        pipeSize: "DN100",
+        fluidType: "water",
+        compensateTemp: false
+      },
+      ConfigEnable: true
     },
     after: {
-      label: "传感器-A01-备用",
-      location: "二楼控制室",
-      building: "A栋",
-      floor: 2,
-      remark: "设备迁移至控制室"
+      SENSORTYPE: "FLOW_ULTRA",
+      SENSORDESC: "超声波流量计-主管道",
+      SENSOREXE: "flow_ultra.exe",
+      REASON: "更换为超声波流量计，精度更高",
+      SENSORCONFIGS: {
+        unit: "m3/h",
+        maxFlow: 800,
+        alarmThreshold: 700,
+        protocol: "RS485",
+        pipeSize: "DN100",
+        fluidType: "water",
+        compensateTemp: true
+      },
+      ConfigEnable: true
     }
   }
 ];
