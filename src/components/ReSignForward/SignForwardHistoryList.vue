@@ -26,12 +26,12 @@ const tableColumns: TableColumnList = [
     fixed: "left"
   },
   {
-    label: "ORDER NO",
+    label: "传签单号",
     prop: "ORDER_NO",
     minWidth: 180
   },
   {
-    label: "SUBMITTER",
+    label: "申请人",
     prop: "SUBMITTER",
     minWidth: 140
   },
@@ -47,7 +47,7 @@ const tableColumns: TableColumnList = [
     minWidth: 180
   },
   {
-    label: "ACTION",
+    label: "动作",
     width: 120,
     fixed: "right",
     slot: "action"

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import {
   SignForwardPendingList,
@@ -11,6 +12,7 @@ defineOptions({
 });
 
 const router = useRouter();
+const activeTab = ref("pending");
 
 function handleViewDetail({
   item,
@@ -31,7 +33,7 @@ function handleViewDetail({
 
 <template>
   <div class="main">
-    <el-tabs>
+    <el-tabs v-model="activeTab">
       <el-tab-pane label="待传签" name="pending">
         <SignForwardPendingList @view-detail="handleViewDetail" />
       </el-tab-pane>

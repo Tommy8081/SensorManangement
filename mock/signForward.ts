@@ -1,148 +1,147 @@
 import { defineFakeRoute } from "vite-plugin-fake-server/client";
 
-// ─── Mock 数据常量 ───────────────────────────────────────────────
+interface SignMockItem {
+  ORDER_NO: string;
+  SUBMITTER: string;
+  applicantName: string;
+  changeContent: string;
+  createTime: string;
+  status: "pending" | "done";
+}
 
-const mockPendingList = [
-  {
-    proclnsId: "PROCLNS-2024-001",
-    applicant: "zhangsan",
-    applicantName: "张三",
-    changeContent: JSON.stringify({
-      beforeValue: "192.168.1.100",
-      afterValue: "192.168.1.200",
-      description: "传感器 IP 地址变更，旧设备下线替换为新设备",
-      modifier: "zhangsan",
-      modifyTime: "2024-05-10 09:30:00"
-    }),
-    createTime: "2024-05-10 09:30:00",
-    status: "pending"
-  },
-  {
-    proclnsId: "PROCLNS-2024-002",
-    applicant: "lisi",
-    applicantName: "李四",
-    changeContent: JSON.stringify({
-      beforeValue: "COM3",
-      afterValue: "COM5",
-      description: "串口号变更，因硬件端口占用调整为 COM5",
-      modifier: "lisi",
-      modifyTime: "2024-05-11 11:00:00"
-    }),
-    createTime: "2024-05-11 11:00:00",
-    status: "pending"
-  },
-  {
-    proclnsId: "PROCLNS-2024-003",
-    applicant: "wangwu",
-    applicantName: "王五",
-    changeContent: JSON.stringify({
-      beforeValue: "Temperature",
-      afterValue: "Humidity",
-      description: "传感器类型变更，原温度传感器更换为湿度传感器",
-      modifier: "wangwu",
-      modifyTime: "2024-05-12 14:20:00"
-    }),
-    createTime: "2024-05-12 14:20:00",
-    status: "pending"
-  }
+const submitterPool = [
+  "zhangsan",
+  "lisi",
+  "wangwu",
+  "zhaoliu",
+  "sunqi",
+  "zhouba",
+  "wujiu",
+  "zhengshi"
 ];
 
-const mockHistoryList = [
-  {
-    proclnsId: "PROCLNS-2024-H001",
-    applicant: "zhaoliu",
-    applicantName: "赵六",
-    changeContent: JSON.stringify({
-      beforeValue: "9600",
-      afterValue: "115200",
-      description: "波特率提升，配合新型传感器通信协议要求",
-      modifier: "zhaoliu",
-      modifyTime: "2024-04-20 10:00:00"
-    }),
-    createTime: "2024-04-20 10:00:00",
-    status: "done"
-  },
-  {
-    proclnsId: "PROCLNS-2024-H002",
-    applicant: "sunqi",
-    applicantName: "孙七",
-    changeContent: JSON.stringify({
-      beforeValue: "true",
-      afterValue: "false",
-      description: "传感器停用，设备进入年度维护期间暂停采集",
-      modifier: "sunqi",
-      modifyTime: "2024-04-25 16:45:00"
-    }),
-    createTime: "2024-04-25 16:45:00",
-    status: "done"
-  }
+const applicantNamePool = [
+  "张三",
+  "李四",
+  "王五",
+  "赵六",
+  "孙七",
+  "周八",
+  "吴九",
+  "郑十"
 ];
 
-/** 根据 proclnsId 返回对应详情 */
-function buildDetail(proclnsId: string, isHistory: boolean) {
+function buildMockList(
+  size: number,
+  prefix: string,
+  status: "pending" | "done",
+  baseDate: string
+): SignMockItem[] {
+  return Array.from({ length: size }, (_, i) => {
+    const idx = i + 1;
+    const submitter = submitterPool[i % submitterPool.length];
+    const applicantName = applicantNamePool[i % applicantNamePool.length];
+    const day = String((idx % 28) + 1).padStart(2, "0");
+    const hour = String(8 + (idx % 10)).padStart(2, "0");
+    const minute = String((idx * 7) % 60).padStart(2, "0");
+    const time = `${baseDate}-${day} ${hour}:${minute}:00`;
+
+    return {
+      ORDER_NO: `${prefix}${String(idx).padStart(3, "0")}`,
+      SUBMITTER: submitter,
+      applicantName,
+      changeContent: JSON.stringify({
+        beforeValue: `旧值-${idx}`,
+        afterValue: `新值-${idx}`,
+        description: `模拟第 ${idx} 条变更内容，用于验证列表与分页展示`,
+        modifier: submitter,
+        modifyTime: time
+      }),
+      createTime: time,
+      status
+    };
+  });
+}
+
+const mockPendingList = buildMockList(35, "SF-P-2024-", "pending", "2024-05");
+const mockHistoryList = buildMockList(22, "SF-H-2024-", "done", "2024-04");
+
+function getPagedData<T>(list: T[], pageNo = 1, pageSize = 20) {
+  const start = (pageNo - 1) * pageSize;
+  const end = start + pageSize;
+  return {
+    list: list.slice(start, end),
+    total: list.length,
+    pageNo,
+    pageSize
+  };
+}
+
+/** 根据 ORDER_NO 返回对应详情 */
+function buildDetail(ORDER_NO: string, isHistory: boolean) {
   const allItems = [...mockPendingList, ...mockHistoryList];
-  const item = allItems.find(i => i.proclnsId === proclnsId);
+  const item = allItems.find(i => i.ORDER_NO === ORDER_NO);
 
   const changeContent = item
     ? JSON.parse(item.changeContent)
     : {
-        beforeValue: "N/A",
-        afterValue: "N/A",
-        description: "无变更说明",
-        modifier: "unknown",
-        modifyTime: "-"
-      };
+      beforeValue: "N/A",
+      afterValue: "N/A",
+      description: "无变更说明",
+      modifier: "unknown",
+      modifyTime: "-"
+    };
 
   return {
-    proclnsId: proclnsId,
-    applicant: item?.applicant ?? "unknown",
+    ORDER_NO,
+    SUBMITTER: item?.SUBMITTER ?? "unknown",
     applicantName: item?.applicantName ?? "未知用户",
     changeContent,
     signProgress: isHistory
       ? [
-          {
-            account: "libu",
-            name: "李部长",
-            time: "2024-04-18 08:30:00",
-            status: "done",
-            action: "approve",
-            remark: "流程合规，同意变更"
-          },
-          {
-            account: "fuli",
-            name: "副理陈经理",
-            time: "2024-04-19 10:15:00",
-            status: "done",
-            action: "approve",
-            remark: "已确认，批准执行"
-          }
-        ]
+        {
+          account: "manager_li",
+          name: "李经理",
+          time: "2024-04-18 08:30:00",
+          status: "done",
+          action: "approve",
+          remark: "流程合规，同意变更"
+        },
+        {
+          account: "director_chen",
+          name: "陈总监",
+          time: "2024-04-19 10:15:00",
+          status: "done",
+          action: "approve",
+          remark: "已确认，批准执行"
+        }
+      ]
       : [
-          {
-            account: "zhangsan",
-            name: "张三（申请人）",
-            time: "2024-05-10 09:30:00",
-            status: "done",
-            action: "approve",
-            remark: "提交变更申请"
-          },
-          {
-            account: "fuli_wang",
-            name: "副理王经理",
-            time: null,
-            status: "current",
-            action: null,
-            remark: null
-          }
-        ],
+        {
+          account: item?.SUBMITTER ?? "unknown",
+          name: `${item?.applicantName ?? "未知用户"}（申请人）`,
+          time: item?.createTime ?? "2024-05-01 09:00:00",
+          status: "done",
+          action: "approve",
+          remark: "提交变更申请"
+        },
+        {
+          account: "manager_wang",
+          name: "王经理",
+          time: undefined,
+          status: "current",
+          action: undefined,
+          remark: undefined
+        }
+      ],
     defaultFlow: [
       {
-        account: "fuli_wang",
+        account: "manager_wang",
         name: "王经理",
         role: "副理"
       },
       {
-        account: "jingli_chen",
+        account: "director_chen",
         name: "陈总监",
         role: "经理"
       }
@@ -162,10 +161,12 @@ export default defineFakeRoute([
   {
     url: "/api/getSignOffList",
     method: "post",
-    response: () => {
+    response: ({ body }) => {
+      const pageNo = Number(body?.pageNo ?? 1);
+      const pageSize = Number(body?.pageSize ?? 20);
       return {
         success: true,
-        data: mockPendingList
+        data: getPagedData(mockPendingList, pageNo, pageSize)
       };
     }
   },
@@ -178,10 +179,12 @@ export default defineFakeRoute([
   {
     url: "/api/getSignOffHistoryList",
     method: "post",
-    response: () => {
+    response: ({ body }) => {
+      const pageNo = Number(body?.pageNo ?? 1);
+      const pageSize = Number(body?.pageSize ?? 20);
       return {
         success: true,
-        data: mockHistoryList
+        data: getPagedData(mockHistoryList, pageNo, pageSize)
       };
     }
   },
@@ -195,9 +198,9 @@ export default defineFakeRoute([
     url: "/api/getSignOffDetail",
     method: "post",
     response: ({ body }) => {
-      const { proclnsId } = body;
-      const isHistory = mockHistoryList.some(i => i.proclnsId === proclnsId);
-      const detail = buildDetail(proclnsId, isHistory);
+      const ORDER_NO = body?.ORDER_NO || "";
+      const isHistory = mockHistoryList.some(i => i.ORDER_NO === ORDER_NO);
+      const detail = buildDetail(ORDER_NO, isHistory);
       return {
         success: true,
         data: detail
