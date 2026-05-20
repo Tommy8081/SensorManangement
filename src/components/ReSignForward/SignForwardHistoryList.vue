@@ -107,7 +107,7 @@ onMounted(loadData);
         :loading="loading"
         :size="size"
         adaptive
-        :adaptiveConfig="{ offsetBottom: 148 }"
+        :adaptiveConfig="{ offsetBottom: 108 }"
         :data="list"
         :columns="dynamicColumns"
         :header-cell-style="{
