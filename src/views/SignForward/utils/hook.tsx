@@ -8,22 +8,25 @@ export function useSignForwardList() {
   const historyList = ref<SignForwardItem[]>([]);
   const pendingLoading = ref(false);
   const historyLoading = ref(false);
+  const pageNo = ref(1);
+  const pageSize = ref(20);
 
   async function loadPending() {
     pendingLoading.value = true;
     try {
       const userAccount = useUserStoreHook().username;
-      const res = await getSignOffList({ userAccount });
-      const raw = Array.isArray(res)
-        ? res
-        : Array.isArray((res as any)?.data)
-          ? (res as any).data
-          : [];
+      const res = await getSignOffList({
+        userAccount,
+        pageNo: pageNo.value,
+        pageSize: pageSize.value
+      });
+      const data = (res as any)?.data ?? res;
+      const raw = Array.isArray(data?.list) ? data.list : [];
       pendingList.value = raw.map((item: any) =>
         typeof item === "string"
           ? {
-              proclnsId: item,
-              applicant: "",
+              ORDER_NO: item,
+              SUBMITTER: "",
               changeContent: "{}",
               createTime: "",
               status: "pending" as const
@@ -41,17 +44,18 @@ export function useSignForwardList() {
     historyLoading.value = true;
     try {
       const userAccount = useUserStoreHook().username;
-      const res = await getSignOffHistoryList({ userAccount });
-      const raw = Array.isArray(res)
-        ? res
-        : Array.isArray((res as any)?.data)
-          ? (res as any).data
-          : [];
+      const res = await getSignOffHistoryList({
+        userAccount,
+        pageNo: pageNo.value,
+        pageSize: pageSize.value
+      });
+      const data = (res as any)?.data ?? res;
+      const raw = Array.isArray(data?.list) ? data.list : [];
       historyList.value = raw.map((item: any) =>
         typeof item === "string"
           ? {
-              proclnsId: item,
-              applicant: "",
+              ORDER_NO: item,
+              SUBMITTER: "",
               changeContent: "{}",
               createTime: "",
               status: "done" as const

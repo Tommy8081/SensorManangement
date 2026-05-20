@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { SignForwardListPanel } from "@/components/ReSignForward";
-import { useSignForwardList } from "./utils/hook";
-import type { SignForwardViewDetailPayload } from "./utils/types";
+import {
+  SignForwardPendingList,
+  SignForwardHistoryList
+} from "@/components/ReSignForward";
+import type { SignForwardItem } from "@/components/ReSignForward/types";
 
 defineOptions({
   name: "SignForwardPage"
@@ -10,20 +12,17 @@ defineOptions({
 
 const router = useRouter();
 
-const {
-  pendingList,
-  historyList,
-  pendingLoading,
-  historyLoading,
-  loadPending,
-  loadHistory
-} = useSignForwardList();
-
-function handleViewDetail({ item, isHistory }: SignForwardViewDetailPayload) {
+function handleViewDetail({
+  item,
+  isHistory
+}: {
+  item: SignForwardItem;
+  isHistory: boolean;
+}) {
   router.push({
     path: "/sign/detail",
     query: {
-      proclnsId: item.proclnsId,
+      ORDER_NO: item.ORDER_NO,
       isHistory: isHistory ? "1" : "0"
     }
   });
@@ -32,14 +31,13 @@ function handleViewDetail({ item, isHistory }: SignForwardViewDetailPayload) {
 
 <template>
   <div class="main">
-    <SignForwardListPanel
-      :pending-list="pendingList"
-      :history-list="historyList"
-      :pending-loading="pendingLoading"
-      :history-loading="historyLoading"
-      @view-detail="handleViewDetail"
-      @refresh-pending="loadPending"
-      @refresh-history="loadHistory"
-    />
+    <el-tabs>
+      <el-tab-pane label="待传签" name="pending">
+        <SignForwardPendingList @view-detail="handleViewDetail" />
+      </el-tab-pane>
+      <el-tab-pane label="历史传签" name="history">
+        <SignForwardHistoryList @view-detail="handleViewDetail" />
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>

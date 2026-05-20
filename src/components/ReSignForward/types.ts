@@ -1,7 +1,12 @@
+export interface PageResult<T> {
+  list: T[];
+  total: number;
+}
+
 /** 传签列表项（申请单） */
 export interface SignForwardItem {
-  proclnsId: string;
-  applicant: string;
+  ORDER_NO: string;
+  SUBMITTER: string;
   applicantName?: string;
   changeContent: string;
   createTime: string;
@@ -37,8 +42,8 @@ export interface SignFlowNode {
 
 /** 传签详情完整数据 */
 export interface SignForwardDetailData {
-  proclnsId: string;
-  applicant: string;
+  ORDER_NO: string;
+  SUBMITTER: string;
   applicantName?: string;
   changeContent: ChangeContentDetail | string;
   signProgress: SignProgressNode[];
