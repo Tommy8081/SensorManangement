@@ -31,6 +31,95 @@ const applicantNamePool = [
   "郑十"
 ];
 
+// 每种变更场景的 before/after JSON 对象模板
+const changeScenarios = [
+  {
+    description: "传感器 IP 地址变更",
+    before: {
+      ip: "192.168.1.100",
+      port: 502,
+      protocol: "Modbus-TCP",
+      enabled: true,
+      sampleInterval: 5
+    },
+    after: {
+      ip: "192.168.1.200",
+      port: 502,
+      protocol: "Modbus-TCP",
+      enabled: true,
+      sampleInterval: 5
+    }
+  },
+  {
+    description: "串口号及波特率变更",
+    before: {
+      port: "COM3",
+      baudRate: 9600,
+      dataBits: 8,
+      stopBits: 1,
+      parity: "none"
+    },
+    after: {
+      port: "COM5",
+      baudRate: 115200,
+      dataBits: 8,
+      stopBits: 1,
+      parity: "none"
+    }
+  },
+  {
+    description: "传感器类型与量程变更",
+    before: {
+      sensorType: "Temperature",
+      unit: "°C",
+      rangeMin: -40,
+      rangeMax: 85,
+      precision: 0.1
+    },
+    after: {
+      sensorType: "Humidity",
+      unit: "%RH",
+      rangeMin: 0,
+      rangeMax: 100,
+      precision: 0.5
+    }
+  },
+  {
+    description: "采样频率与上报策略变更",
+    before: {
+      sampleRate: 1,
+      reportMode: "period",
+      reportInterval: 60,
+      alarmEnabled: false,
+      alarmThreshold: null
+    },
+    after: {
+      sampleRate: 10,
+      reportMode: "threshold",
+      reportInterval: 10,
+      alarmEnabled: true,
+      alarmThreshold: 80
+    }
+  },
+  {
+    description: "设备标签与位置信息变更",
+    before: {
+      label: "传感器-A01",
+      location: "一楼机房",
+      building: "A栋",
+      floor: 1,
+      remark: ""
+    },
+    after: {
+      label: "传感器-A01-备用",
+      location: "二楼控制室",
+      building: "A栋",
+      floor: 2,
+      remark: "设备迁移至控制室"
+    }
+  }
+];
+
 function buildMockList(
   size: number,
   prefix: string,
@@ -45,15 +134,16 @@ function buildMockList(
     const hour = String(8 + (idx % 10)).padStart(2, "0");
     const minute = String((idx * 7) % 60).padStart(2, "0");
     const time = `${baseDate}-${day} ${hour}:${minute}:00`;
+    const scenario = changeScenarios[i % changeScenarios.length];
 
     return {
       ORDER_NO: `${prefix}${String(idx).padStart(3, "0")}`,
       SUBMITTER: submitter,
       applicantName,
       changeContent: JSON.stringify({
-        beforeValue: `旧值-${idx}`,
-        afterValue: `新值-${idx}`,
-        description: `模拟第 ${idx} 条变更内容，用于验证列表与分页展示`,
+        beforeValue: JSON.stringify(scenario.before),
+        afterValue: JSON.stringify(scenario.after),
+        description: scenario.description,
         modifier: submitter,
         modifyTime: time
       }),

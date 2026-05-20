@@ -5,6 +5,7 @@ import Back from "~icons/ep/arrow-left";
 import Check from "~icons/ep/check";
 import Close from "~icons/ep/close";
 import ChangeContentTable from "./components/ChangeContentTable.vue";
+import JsonDiffViewer from "./components/JsonDiffViewer.vue";
 import SignProgressTrack from "./components/SignProgressTrack.vue";
 import SignDefaultFlow from "./components/SignDefaultFlow.vue";
 import ActionReasonDialog from "./components/ActionReasonDialog.vue";
@@ -97,6 +98,12 @@ function handleConfirm(reason: string) {
     <div class="sign-content">
       <div class="sign-left">
         <ChangeContentTable :content="parsedChangeContent" />
+        <JsonDiffViewer
+          class="mt-3"
+          title="字段值 Diff 对比"
+          :before="String(parsedChangeContent.beforeValue ?? '')"
+          :after="String(parsedChangeContent.afterValue ?? '')"
+        />
       </div>
       <div class="sign-right">
         <div class="sign-right-progress">
