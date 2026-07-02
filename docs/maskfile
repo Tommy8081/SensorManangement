@@ -1,10 +1,1 @@
-[
-  {
-    ORDER_NO: 'SSR-20260513-001',
-    SUBMITTER: 'JYWANGZO',
-    applicantName: 'JYWANGZO',
-    changeContent: '{"beforeValue":"{\\"SENSORTYPE\\":\\"TESTS\\",\\"SENSORDESC\\":\\"TEST\\",\\"SENSOREXE\\":\\"NSANO\\",\\"REAFOR TEST2\\",\\"SENSORCONFIGS\\":\\"\\",\\"ConfigEnable\\":false}","afterValue":"{\\"SENSORTYPE\\":\\"TEST\\",\\"SENSORDESC\\":\\"TEST\\",\\"SENSOREXE\\":\\"\\",\\"REASON\\":\\"FOR TEST\\",\\"SENSORCONFIGS\\":\\"\\",\\"ConfigEnable\\":false}","SON\\":\\"description":"FOR TEST","modifier":"JYWANGZO","modifyTime":"2026-05-13 23:22:20"}',
-    createTime: '2026-05-13 23:22:20',
-    status: 'pending'
-  }
-]
+我是半导体IT部门设备自动化课的it工程师，EAP使用的代码语言是vb.net并且由于历史原因，vb文件会存在上万行代码。使用的SECS 通讯协议，并且是RV 通讯MES等cell server，我需要有一个可以详细分析EAP Code并且根据我的log 和问题，快速定位到逻辑，并生成详细的分析报告，这么一个agent，你可以帮我想想怎么用codex cli去搭建么？
