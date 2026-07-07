@@ -1,0 +1,49 @@
+SELECT
+    trunc (t.finish_t) shiftday,
+    COUNT(DISTINCT t.taskid) taskcount,
+    SUM(a1.curmainqty) robotmove,
+    MAX(c.move) move
+FROM
+    (
+        SELECT
+            taskid,
+            objectid,
+            tasktype,
+            flag,
+            instnum,
+            nexteqp,
+            finish_t
+        FROM
+            mfgadmin.st_robot_task
+        WHERE
+            finish_t >= trunc (SYSDATE -30)
+            and finish_t <= trunc (SYSDATE)
+) t,
+    (
+        SELECT
+            SUM(a.move) MOVE,
+            a.datetime histdate
+        FROM
+            MFGADMIN.ST_LOCATION_KSR_700_V2 a
+        WHERE
+            a.datetime >= trunc (SYSDATE -30)
+and a.datetime <= trunc (SYSDATE)
+        GROUP BY
+            a.datetime
+    ) c,
+    cim.pls_tbl_logsheet a1,
+    mes_tbl_actl a
+WHERE
+    t.finish_t IS NOT NULL
+    AND t.tasktype <> 'Move'
+    AND t.flag = 'Y'
+    AND a1.lotid = a.lotid
+ AND a.lottype IN ('PP', 'PR', 'RP', 'ED', 'EP', 'MZ', 'BK')
+    AND t.objectid = a1.lotid
+    AND t.instnum = a1.Instnum
+    AND t.nexteqp = a1.eqpid
+    AND trunc (t.finish_t) = c.histdate
+GROUP BY
+    trunc (t.finish_t)
+ORDER BY
+trunc (t.finish_t)
