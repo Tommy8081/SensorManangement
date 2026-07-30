@@ -1,16 +1,17 @@
 import dayjs from "dayjs";
 import editForm from "../form.vue";
-import ConfigViewer from "../components/ConfigViewer.vue";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
 import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "../utils/types";
 import type { PaginationProps } from "@pureadmin/table";
 import { deviceDetection } from "@pureadmin/utils";
-import { reactive, ref, onMounted, h } from "vue";
-import { parseINI, stringifyINI } from "./iniParser";
+import { reactive, ref, onMounted, h, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { stringifyINI, parseINI } from "./iniParser";
 
 export function useSensorType() {
+  const { t, locale } = useI18n();
   const form = reactive({
     SensorType: ""
   });
@@ -24,106 +25,87 @@ export function useSensorType() {
     background: true
   });
 
-  const columns: TableColumnList = [
+  // 使用 computed 使列配置响应式
+  const columns = computed<TableColumnList>(() => [
     {
-      label: "传感器类型",
+      label: t("sensorManage.sensorType.table.sensorType"),
       prop: "SensorType",
-      minWidth: 120
+      minWidth: 150
     },
     {
-      label: "传感器描述",
+      label: t("sensorManage.sensorType.table.sensorDesc"),
       prop: "SensorDesc",
-      minWidth: 200
+      minWidth: 150
     },
     {
-      label: "传感器配置",
+      label: t("sensorManage.sensorType.table.sensorConfigs"),
       prop: "SensorConfigs",
-      minWidth: 120,
+      minWidth: 200,
       cellRenderer: ({ row }) => (
-        <el-button type="primary" link onClick={() => handleViewConfig(row)}>
-          查看配置
-        </el-button>
+        <el-tag type="info" size="small">
+          {row.SensorConfigs ? t("common.yes") : t("common.no")}
+        </el-tag>
       )
     },
     {
-      label: "创建时间",
+      label: t("sensorManage.sensorType.table.createTime"),
       prop: "CreateTime",
-      minWidth: 160,
+      minWidth: 180,
       formatter: ({ CreateTime }) =>
         CreateTime ? dayjs(CreateTime).format("YYYY-MM-DD HH:mm:ss") : "-"
     },
     {
-      label: "更新时间",
+      label: t("sensorManage.sensorType.table.updateTime"),
       prop: "UpdateTime",
-      minWidth: 160,
+      minWidth: 180,
       formatter: ({ UpdateTime }) =>
         UpdateTime ? dayjs(UpdateTime).format("YYYY-MM-DD HH:mm:ss") : "-"
     },
     {
-      label: "操作",
+      label: t("sensorManage.sensorType.table.operation"),
       fixed: "right",
-      width: 180,
+      width: 240,
       slot: "operation"
     }
-  ];
+  ]);
 
-  function handleViewConfig(row: FormItemProps) {
-    let configObj;
-    try {
-      // 尝试解析 JSON 字符串
-      configObj = JSON.parse(row.SensorConfigs);
-    } catch {
-      message("配置数据格式错误", { type: "error" });
-      return;
-    }
-
-    addDialog({
-      title: "配置查看",
-      props: {
-        config: configObj,
-        sensorType: row.SensorType
-      },
-      width: "700px",
-      draggable: true,
-      fullscreen: deviceDetection(),
-      fullscreenIcon: true,
-      closeOnClickModal: false,
-      hideFooter: true,
-      contentRenderer: () =>
-        h(ConfigViewer, {
-          config: configObj,
-          sensorType: row.SensorType
-        })
-    });
-  }
+  // 监听语言变化，强制刷新列
+  const tableKey = ref(0);
+  watch(locale, () => {
+    tableKey.value++;
+  });
 
   function handleDelete(row: FormItemProps) {
     ElMessageBox.confirm(
-      `确认要删除传感器类型"${row.SensorType}"吗？`,
-      "系统提示",
+      t("sensorManage.sensorType.message.deleteConfirm", {
+        type: row.SensorType
+      }),
+      t("sensorManage.sensorList.message.systemTip"),
       {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-        draggable: true
+        confirmButtonText: t("common.confirm"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning"
       }
     )
       .then(() => {
         // TODO: 调用删除接口
-        message(`已删除传感器类型 ${row.SensorType}`, { type: "success" });
+        message(
+          t("sensorManage.sensorType.message.deleteSuccess", {
+            type: row.SensorType
+          }),
+          { type: "success" }
+        );
         onSearch();
       })
       .catch(() => {});
   }
 
   function handleSizeChange(val: number) {
-    pagination.pageSize = val;
-    onSearch();
+    console.log(`${val} items per page`);
   }
 
   function handleCurrentChange(val: number) {
-    pagination.currentPage = val;
-    onSearch();
+    console.log(`current page: ${val}`);
   }
 
   function handleSelectionChange(val) {
@@ -132,67 +114,7 @@ export function useSensorType() {
 
   async function onSearch() {
     loading.value = true;
-    // TODO: 替换为实际的传感器类型列表接口
-
-    // 模拟数据
-    const mockData = {
-      list: [
-        {
-          SensorType: "Temperature",
-          SensorDesc: "温度传感器",
-          SensorConfigs: JSON.stringify({
-            General: {
-              unit: "℃",
-              protocol: "Modbus RTU",
-              enable: true
-            },
-            Range: {
-              min: -40,
-              max: 125
-            },
-            Communication: {
-              baudRate: 9600,
-              dataBits: 8,
-              stopBits: 1,
-              parity: "None",
-              address: 1
-            }
-          }),
-          CreateTime: "2024-01-15 10:30:00",
-          UpdateTime: "2024-01-20 15:45:00"
-        },
-        {
-          SensorType: "Humidity",
-          SensorDesc: "湿度传感器",
-          SensorConfigs: JSON.stringify({
-            General: {
-              unit: "%RH",
-              protocol: "I2C",
-              enable: true
-            },
-            Range: {
-              min: 0,
-              max: 100
-            },
-            Communication: {
-              address: 0x40,
-              timeout: 1000
-            }
-          }),
-          CreateTime: "2024-01-16 09:20:00",
-          UpdateTime: "2024-01-21 11:30:00"
-        }
-      ] as FormItemProps[],
-      total: 2,
-      pageSize: 10,
-      currentPage: 1
-    };
-
-    dataList.value = mockData.list;
-    pagination.total = mockData.total;
-    pagination.pageSize = mockData.pageSize;
-    pagination.currentPage = mockData.currentPage;
-
+    // TODO: 调用接口
     setTimeout(() => {
       loading.value = false;
     }, 500);
@@ -205,20 +127,24 @@ export function useSensorType() {
   };
 
   function openDialog(title = "新增", row?: FormItemProps) {
-    // 如果是编辑，需要将 JSON 转回 INI 格式
+    const dialogTitle =
+      title === "新增"
+        ? t("sensorManage.sensorType.dialog.addTitle")
+        : t("sensorManage.sensorType.dialog.editTitle");
+
+    // 如果是编辑，将 JSON 转为 INI
     let iniConfig = "";
     if (row?.SensorConfigs) {
       try {
         const configObj = JSON.parse(row.SensorConfigs);
-        // 将 JSON 对象转换为 INI 格式
         iniConfig = stringifyINI(configObj);
-      } catch (e) {
-        console.error("配置解析失败", e);
+      } catch (error) {
+        console.error("解析配置失败:", error);
       }
     }
 
     addDialog({
-      title: `${title}传感器类型`,
+      title: dialogTitle,
       props: {
         formInline: {
           SensorType: row?.SensorType ?? "",
@@ -237,37 +163,42 @@ export function useSensorType() {
         const curData = options.props.formInline as FormItemProps;
 
         function chores() {
-          message(`您${title}了传感器类型${curData.SensorType}`, {
-            type: "success"
-          });
-          done();
-          onSearch();
+          const messageKey =
+            title === "新增"
+              ? "sensorManage.sensorType.message.addSuccess"
+              : "sensorManage.sensorType.message.editSuccess";
+
+          // 将 INI 转为 JSON
+          try {
+            const configObj = parseINI(curData.SensorConfigs);
+            const jsonConfig = JSON.stringify(configObj);
+
+            console.log("提交数据:", {
+              ...curData,
+              SensorConfigs: jsonConfig
+            });
+
+            message(t(messageKey, { type: curData.SensorType }), {
+              type: "success"
+            });
+            done();
+            onSearch();
+          } catch (error) {
+            console.log(error);
+            message(t("sensorManage.sensorType.message.validateError"), {
+              type: "error"
+            });
+          }
         }
 
         FormRef.validate(valid => {
           if (valid) {
-            // 将 INI 格式转换为 JSON 字符串
-            try {
-              const configObj = parseINI(curData.SensorConfigs);
-              const jsonConfig = JSON.stringify(configObj);
-
-              console.log("提交数据:", {
-                SensorType: curData.SensorType,
-                SensorDesc: curData.SensorDesc,
-                SensorConfigs: jsonConfig
-              });
-
-              if (title === "新增") {
-                // TODO: 调用新增传感器类型接口
-                // await addSensorType({ ...curData, SensorConfigs: jsonConfig });
-                chores();
-              } else {
-                // TODO: 调用修改传感器类型接口
-                // await updateSensorType({ ...curData, SensorConfigs: jsonConfig });
-                chores();
-              }
-            } catch {
-              message("配置格式转换失败", { type: "error" });
+            if (title === "新增") {
+              // TODO: 调用新增接口
+              chores();
+            } else {
+              // TODO: 调用修改接口
+              chores();
             }
           }
         });
@@ -285,6 +216,7 @@ export function useSensorType() {
     columns,
     dataList,
     pagination,
+    tableKey, // 导出 tableKey
     onSearch,
     resetForm,
     openDialog,

@@ -183,12 +183,19 @@ const sensorManagementRouter = {
       component: "SensorManage/SensorTypePage/index",
       meta: {
         icon: "ep:setting",
-        title: "传感器类型管理",
+        title: "menus.pureSensorType",
         roles: ["admin"]
       }
     }
   ]
 };
+
+export const asyncRoutes = [
+  sensorManagementRouter,
+  systemManagementRouter,
+  systemMonitorRouter,
+  permissionRouter
+];
 
 export default defineFakeRoute([
   {
@@ -197,12 +204,7 @@ export default defineFakeRoute([
     response: () => {
       return {
         success: true,
-        data: [
-          sensorManagementRouter,
-          systemManagementRouter,
-          systemMonitorRouter,
-          permissionRouter
-        ]
+        data: asyncRoutes
       };
     }
   }

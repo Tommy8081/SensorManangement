@@ -84,6 +84,7 @@ menus:
   pureSystemLog: Systemprotokolle
   pureSensorManage: Sensorverwaltung
   pureSensorList: Sensorliste
+  pureSensorType: Sensortyp
 status:
   pureLoad: Laden...
   pureMessage: Nachricht
@@ -102,27 +103,17 @@ login:
   purePassWordReg: Bitte Passwort eingeben
   purePassWordRuleReg: "Passwortformat: 8-18 Zeichen, Kombination aus Zahlen, Buchstaben und Symbolen"
 sensorManage:
+  # Sensorverwaltungsmodul - Deutsch
   sensorList:
     title: Sensorliste
-    searchForm:
+    search:
       sensorName: Sensorname
       sensorType: Sensortyp
-      status: Status
-      search: Suchen
-      reset: Zurücksetzen
-      sensorNamePlaceholder: Bitte Sensornamen eingeben
-      sensorTypePlaceholder: Bitte Sensortyp auswählen
-      statusPlaceholder: Bitte Status auswählen
+      enable: Status
       enabled: Aktiviert
       disabled: Deaktiviert
-    sensorType:
-      temperature: Temperatursensor
-      humidity: Feuchtigkeitssensor
-      pressure: Drucksensor
-    portType:
-      tcp: TCP/IP
-      serial: Serieller Anschluss
-      usb: USB
+      searchBtn: Suchen
+      resetBtn: Zurücksetzen
     table:
       sensorName: Sensorname
       sensorType: Sensortyp
@@ -134,64 +125,277 @@ sensorManage:
       stationNo: Stationsnummer
       port: Port
       com: COM-Port
-      enable: Aktivieren
-      lastUpdateUser: Letzter Benutzer
+      enable: Status
+      enabled: Aktiviert
+      disabled: Deaktiviert
+      lastUpdateUser: Zuletzt aktualisiert von
       lastUpdateTime: Letzte Aktualisierung
       operation: Aktion
-      enabled: Aktivieren
-      disabled: Deaktivieren
     button:
       add: Sensor hinzufügen
+      view: Anzeigen
       edit: Bearbeiten
       delete: Löschen
     dialog:
       addTitle: Sensor hinzufügen
       editTitle: Sensor bearbeiten
-    form:
-      sensorName: Sensorname
-      sensorType: Sensortyp
-      portType: Verbindungstyp
-      enable: Aktivieren
-      wsid: OPI-Nummer
-      location: OPI-Standort
-      eqpid: Geräte-ID
-      ip: IP-Adresse
-      stationNo: Stationsnummer
-      port: Port
-      com: COM-Port
-      sensorNamePlaceholder: Bitte Sensornamen eingeben
-      sensorTypePlaceholder: Bitte Sensortyp auswählen
-      portTypePlaceholder: Bitte Verbindungstyp auswählen
-      wsidPlaceholder: Bitte OPI-Nummer eingeben
-      locationPlaceholder: Bitte OPI-Standort eingeben
-      eqpidPlaceholder: Bitte Geräte-ID eingeben
-      ipPlaceholder: Bitte IP-Adresse eingeben
-      stationNoPlaceholder: Bitte Stationsnummer eingeben
-      portPlaceholder: Bitte Portnummer eingeben
-      comPlaceholder: Bitte COM-Port eingeben (z.B. COM1)
-    rules:
-      sensorNameRequired: Sensorname ist erforderlich
-      sensorTypeRequired: Sensortyp ist erforderlich
-      portTypeRequired: Verbindungstyp ist erforderlich
-      wsidRequired: OPI-Nummer ist erforderlich
-      locationRequired: OPI-Standort ist erforderlich
-      eqpidRequired: Geräte-ID ist erforderlich
-      ipRequired: IP-Adresse ist erforderlich
-      ipFormat: Bitte gültige IP-Adresse eingeben
-      stationNoRequired: Stationsnummer ist erforderlich
-      portRequired: Port ist erforderlich
-      portFormat: Port muss eine Zahl sein
+      viewTitle: Sensor anzeigen
     message:
-      confirmDelete: Möchten Sie Sensor {name} wirklich löschen?
-      deleteSuccess: Sie haben Sensor {name} gelöscht
-      addSuccess: Sie haben Sensor {name} hinzugefügt
-      editSuccess: Sie haben Sensor {name} aktualisiert
-      enableConfirm: Möchten Sie Sensor {name} wirklich aktivieren?
-      disableConfirm: Möchten Sie Sensor {name} wirklich deaktivieren?
-      enableSuccess: Sensor {name} wurde aktiviert
-      disableSuccess: Sensor {name} wurde deaktiviert
-      systemTip: Systemhinweis
-      confirm: Bestätigen
-      cancel: Abbrechen
       enable: Aktivieren
       disable: Deaktivieren
+      enableSuccess: Sensor {name} aktiviert
+      disableSuccess: Sensor {name} deaktiviert
+      addSuccess: Sensor {name} erfolgreich hinzugefügt
+      editSuccess: Sensor {name} erfolgreich aktualisiert
+      deleteSuccess: Sensor {name} erfolgreich gelöscht
+      confirm: Bestätigen
+      cancel: Abbrechen
+      systemTip: Systembenachrichtigung
+      noSvidList: Keine SVID-Liste für diesen Sensor konfiguriert
+      noStationNo: Keine Stationsnummer für diesen Sensor konfiguriert
+
+  # Sensorformular
+  sensorForm:
+    basicInfo: Grundinformationen
+    deviceInfo: Geräteinformationen
+    optionalConfig: Optionale Konfiguration
+    sensorName: Sensorname
+    sensorType: Sensortyp
+    portType: Verbindungstyp
+    enable: Aktivieren
+    wsid: OPI-Nummer
+    location: OPI-Standort
+    eqpid: Geräte-ID
+    stationNo: Stationsnummer
+    tcp: TCP/IP
+    serial: Seriell
+    usb: USB
+    enableText: Aktiviert
+    disableText: Deaktiviert
+    placeholder:
+      sensorName: Sensorname eingeben
+      sensorType: Sensortyp auswählen
+      portType: Verbindungstyp auswählen
+      wsid: OPI-Nummer eingeben
+      location: OPI-Standort eingeben
+      eqpid: Geräte-ID eingeben
+      stationNo: Stationsnummer eingeben
+    switch:
+      ipConfig: IP-Konfiguration hinzufügen
+      comConfig: COM-Konfiguration hinzufügen
+      sensorConfig: Sensorkonfiguration anzeigen
+      svidConfig: SVID-Konfiguration hinzufügen
+      yes: Ja
+      no: Nein
+    ipConfig:
+      title: IP-Konfiguration
+      ip: IP-Adresse
+      port: Portnummer
+      ipPlaceholder: IP-Adresse eingeben (z.B. 192.168.1.100)
+      portPlaceholder: Portnummer eingeben
+    comConfig:
+      title: COM-Konfiguration
+      com: COM-Port
+      comPlaceholder: COM-Port eingeben (z.B. COM1)
+    sensorConfig:
+      title: Sensorkonfiguration
+      editBtn: Konfiguration bearbeiten
+      saveBtn: Konfiguration speichern
+      cancelBtn: Abbrechen
+      saveSuccess: Konfiguration erfolgreich gespeichert
+      formatError: Konfigurationsformatfehler
+      placeholder: |
+        Konfiguration eingeben, Format:
+        key=value
+        Beispiel:
+        unit=℃
+        protocol=Modbus RTU
+        min=-40
+        max=125
+      tip: Konfigurationsformat ist key=value, wird beim Speichern in JSON konvertiert
+      reference: Obige Konfiguration stammt aus der Sensortypverwaltung. Klicken Sie auf "Konfiguration bearbeiten" zum Anpassen.
+      noType: Bitte wählen Sie zuerst den Sensortyp aus, um die Konfiguration zu laden
+      loading: Konfiguration wird geladen...
+      empty: Keine Konfigurationsinformationen für diesen Sensortyp
+    svidConfig:
+      title: SVID-Konfiguration
+
+  # SVID-Konfiguration
+  svidConfig:
+    stationInfo: Aktuell konfigurierte Stationen
+    totalStations: Gesamtstationen
+    batchGenerate: SVID stapelweise generieren
+    selectStation: Station auswählen
+    currentStation: Station {current}/{total}
+    actions:
+      import: Aktuelle Station importieren
+      download: Vorlage herunterladen
+      clear: Aktuelle Station leeren
+      add: Kanal hinzufügen
+      batchGenerate: Alle Stationen stapelweise generieren
+      copyToOther: Zu anderen Stationen kopieren
+    channel: Kanalname
+    svid: SVID
+    notSet: Nicht gesetzt
+    tips:
+      title: Anleitung
+      currentStation: Derzeit wird die Konfiguration von Station {station} bearbeitet
+      defaultChannels: Jede Station hat standardmäßig {count} Kanäle, weitere können hinzugefügt werden
+      importCsv: Unterstützt den Import von CSV-Dateien (nur aktuelle Station)
+      batchGenerate: "Stapelgenerierung: Konfiguration für alle {total} Stationen automatisch generieren"
+      copyFunction: "Kopierfunktion: Aktuelle Stationskonfiguration zu anderen Stationen kopieren"
+      autoSwitch: Beim Stationswechsel wird die aktuelle Konfiguration automatisch gespeichert
+    dialog:
+      batchGenerateTitle: SVID stapelweise generieren
+      batchGenerateMessage: Vollständige SVID-Konfiguration für alle Stationen wird generiert
+      totalStations: Gesamtstationen
+      channelsPerStation: Kanäle pro Station
+      totalConfigs: Gesamtkonfigurationen
+      format: 'Format: Channel{n}_S{station} = SVID{n}_S{station}'
+      warning: ⚠️ Diese Aktion überschreibt alle vorhandenen Konfigurationen
+      copyTitle: Zu anderen Stationen kopieren
+      copyMessage: Konfiguration von Station {station} zu allen anderen Stationen kopieren
+      currentChannels: Aktuelle Kanäle
+      copyTo: Wird kopiert zu
+      otherStations: anderen Stationen
+      copyWarning: ⚠️ Diese Aktion überschreibt vorhandene Konfigurationen in anderen Stationen
+    message:
+      generateSuccess: '{count} SVID-Konfigurationen erfolgreich generiert'
+      copySuccess: Konfiguration zu allen {count} Stationen kopiert
+      importSuccess: Station {station} hat {count} Konfigurationen erfolgreich importiert
+      emptyChannels: '{count} Kanäle haben leere SVID-Werte, auf "NA" gesetzt'
+      clearSuccess: Konfiguration von Station {station} geleert
+      downloadSuccess: Vorlage für Station {station} erfolgreich heruntergeladen
+      importError: Import fehlgeschlagen
+      noChannels: Station {station} hat keine SVID-Konfiguration
+      minChannels: Mindestens {count} Kanalkonfigurationen erforderlich
+
+  # SVID-Daten-Viewer
+  svidViewer:
+    title: SVID-Daten-Viewer
+    totalStations: Gesamtstationen
+    currentStationCount: Aktuelle Station SVID-Anzahl
+    selectStation: Station auswählen
+    queryBtn: Daten abfragen
+    waitBtn: Warten {time}s
+    table:
+      index: '#'
+      channel: Kanal
+      svid: SVID
+      status: Status
+      value: Datenwert
+      updateTime: Aktualisierungszeit
+      statusNormal: Normal
+      statusError: Fehler
+      statusLoading: Nicht abgefragt
+      noData: Keine Daten
+    message:
+      querySuccess: Daten von Station {station} erfolgreich abgefragt
+      queryError: Datenabfrage fehlgeschlagen
+      wait: "Bitte warten Sie {time} Sekunden, bevor Sie erneut abfragen"
+      noConfig: "Station {station} hat keine SVID-Liste konfiguriert"
+    tips:
+      title: Hinweise
+      currentView: Derzeit werden Daten von Station {current}/{total} angezeigt
+      totalCount: Diese Station hat {count} SVIDs
+      rateLimit: Auf eine Abfrage alle 5 Sekunden beschränkt, um häufige Abfragen zu vermeiden
+      switchStation: Beim Stationswechsel werden Daten neu initialisiert, erneute Abfrage erforderlich
+      naSkip: Kanäle mit SVID-Wert "NA" werden nicht abgefragt
+
+  # Sensortypverwaltung
+  sensorType:
+    title: Sensortypliste
+    search:
+      sensorType: Sensortyp
+      searchBtn: Suchen
+      resetBtn: Zurücksetzen
+    table:
+      sensorType: Sensortyp
+      sensorDesc: Sensorbeschreibung
+      sensorConfigs: Sensorkonfiguration
+      createTime: Erstellungszeit
+      updateTime: Aktualisierungszeit
+      operation: Aktion
+    button:
+      add: Typ hinzufügen
+      view: Konfiguration anzeigen
+      edit: Bearbeiten
+      delete: Löschen
+    dialog:
+      addTitle: Sensortyp hinzufügen
+      editTitle: Sensortyp bearbeiten
+      viewTitle: Sensorkonfiguration anzeigen
+    form:
+      sensorType: Sensortyp
+      sensorDesc: Sensorbeschreibung
+      sensorConfigs: Sensorkonfiguration
+      placeholder:
+        sensorType: Sensortyp eingeben (z.B. Temperature)
+        sensorDesc: Sensorbeschreibung eingeben (z.B. Temperatursensor)
+        sensorConfigs: |
+          Konfiguration im INI-Format eingeben
+          Beispiel:
+          unit=℃
+          protocol=Modbus RTU
+          min=-40
+          max=125
+        actions:
+          insertExample: Beispielvorlage einfügen
+          validate: Format validieren
+      tips:
+        title: Hinweise
+        format: Verwenden Sie das key=value-Format zur Definition von Konfigurationselementen
+        comment: Unterstützt Kommentare (Zeilen, die mit ; oder # beginnen)
+        oneLine: Ein Konfigurationselement pro Zeile
+    message:
+      addSuccess: Sensortyp {type} erfolgreich hinzugefügt
+      editSuccess: Sensortyp {type} erfolgreich aktualisiert
+      deleteSuccess: Sensortyp {type} gelöscht
+      deleteConfirm: Löschen des Sensortyps "{type}" bestätigen?
+      validateSuccess: Konfigurationsformat erfolgreich validiert
+      validateError: Konfigurationsformatfehler
+
+  # Konfigurations-Label-Mapping
+  configLabels:
+    unit: Einheit
+    min: Minimum
+    max: Maximum
+    accuracy: Genauigkeit
+    protocol: Protokoll
+    baudRate: Baudrate
+    dataBits: Datenbits
+    stopBits: Stoppbits
+    parity: Parität
+    address: Geräteadresse
+    timeout: Zeitüberschreitung
+    interval: Intervall
+    host: Host-Adresse
+    port: Portnummer
+    ip: IP-Adresse
+    sensorModel: Sensormodell
+    manufacturer: Hersteller
+    calibrationDate: Kalibrierungsdatum
+    enable: Aktivierungsstatus
+    description: Beschreibung
+
+# Allgemein
+common:
+  confirm: Bestätigen
+  cancel: Abbrechen
+  save: Speichern
+  edit: Bearbeiten
+  delete: Löschen
+  add: Hinzufügen
+  search: Suchen
+  reset: Zurücksetzen
+  view: Anzeigen
+  close: Schließen
+  loading: Laden...
+  yes: Ja
+  no: Nein
+  success: Erfolg
+  error: Fehler
+  warning: Warnung
+  info: Information
+  sensor: Sensor
+  type: Typ

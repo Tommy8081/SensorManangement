@@ -20,7 +20,8 @@
     "lint": "pnpm lint:eslint && pnpm lint:prettier && pnpm lint:stylelint",
     "prepare": "husky",
     "preinstall": "node scripts/check-node-version.js",
-    "check-version": "node scripts/check-node-version.js"
+    "check-version": "node scripts/check-node-version.js",
+    "check-i18n": "node scripts/check-i18n.js"
   },
   "keywords": [
     "pure-admin-thin",
@@ -107,6 +108,7 @@
     "eslint-plugin-vue": "^10.3.0",
     "gradient-string": "^3.0.0",
     "husky": "^9.1.7",
+    "js-yaml": "^4.1.0",
     "lint-staged": "^16.1.2",
     "postcss": "^8.5.6",
     "postcss-html": "^1.8.0",

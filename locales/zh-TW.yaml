@@ -84,6 +84,7 @@ menus:
   pureSystemLog: "系統日誌"
   pureSensorManage: "傳感器管理"
   pureSensorList: "傳感器列表"
+  pureSensorType: "傳感器類型"
 status:
   pureLoad: "加載中..."
   pureMessage: "訊息"
@@ -195,3 +196,247 @@ sensorManage:
       cancel: "取消"
       enable: "啟用"
       disable: "停用"
+  sensorForm:
+    basicInfo: 基本信息
+    deviceInfo: 設備信息
+    optionalConfig: 可選配置項
+    sensorName: 傳感器名稱
+    sensorType: 傳感器類型
+    portType: 連接方式
+    enable: 是否啟用
+    wsid: OPI編號
+    location: OPI位置
+    eqpid: 機台編號
+    stationNo: 站點編號
+    tcp: TCP/IP
+    serial: 串口
+    usb: USB
+    enableText: 啟用
+    disableText: 停用
+    placeholder:
+      sensorName: 請輸入傳感器名稱
+      sensorType: 請選擇傳感器類型
+      portType: 請選擇連接方式
+      wsid: 請輸入OPI編號
+      location: 請輸入OPI位置
+      eqpid: 請輸入機台編號
+      stationNo: 請輸入站點編號
+    switch:
+      ipConfig: 添加IP配置
+      comConfig: 添加COM配置
+      sensorConfig: 查看傳感器配置
+      svidConfig: 添加SVID配置
+      yes: 是
+      no: 否
+    ipConfig:
+      title: IP 配置
+      ip: IP地址
+      port: 端口號
+      ipPlaceholder: 請輸入IP地址（如：192.168.1.100）
+      portPlaceholder: 請輸入端口號
+    comConfig:
+      title: COM 配置
+      com: COM口
+      comPlaceholder: 請輸入COM口（如：COM1）
+    sensorConfig:
+      title: 傳感器配置
+      editBtn: 編輯配置
+      saveBtn: 保存配置
+      cancelBtn: 取消
+      saveSuccess: 配置保存成功
+      formatError: 配置格式錯誤
+      placeholder: |
+        請輸入配置內容，格式：
+        key=value
+        例如：
+        unit=℃
+        protocol=Modbus RTU
+        min=-40
+        max=125
+      tip: 配置格式為 key=value，保存后將轉換為 JSON 格式存儲
+      reference: 以上配置來自傳感器類型管理。點擊"編輯配置"可自定義此傳感器的配置。
+      noType: 請先選擇傳感器類型以加載對應的配置
+      loading: 加載配置中...
+      empty: 該傳感器類型暫無配置信息
+    svidConfig:
+      title: SVID 配置
+
+  # SVID 配置
+  svidConfig:
+    stationInfo: 當前配置站點數
+    totalStations: 總站點數
+    batchGenerate: 批量生成 SVID
+    selectStation: 選擇站點
+    currentStation: Station {current}/{total}
+    actions:
+      import: 導入當前站點
+      download: 下載模板
+      clear: 清空當前站點
+      add: 添加通道
+      batchGenerate: 批量生成所有站點
+      copyToOther: 複製到其他站點
+    channel: 通道名稱
+    svid: SVID
+    notSet: 未設置
+    tips:
+      title: 使用說明：
+      currentStation: 當前編輯 Station {station} 的配置
+      defaultChannels: 每個站點默認 {count} 個通道，可添加更多
+      importCsv: 支持導入 CSV 文件（僅導入當前站點）
+      batchGenerate: 批量生成：為所有 {total} 個站點自動生成配置
+      copyFunction: 複製功能：將當前站點配置複製到其他站點
+      autoSwitch: 切換站點會自動保存當前配置
+    dialog:
+      batchGenerateTitle: 批量生成 SVID
+      batchGenerateMessage: 將為所有站點生成完整的 SVID 配置
+      totalStations: 總站點數
+      channelsPerStation: 每站通道數
+      totalConfigs: 總配置數
+      format: '格式: Channel{n}_S{station} = SVID{n}_S{station}'
+      warning: ⚠️ 此操作將覆蓋所有現有配置
+      copyTitle: 複製到其他站點
+      copyMessage: 將 Station {station} 的配置複製到其他所有站點
+      currentChannels: 當前配置通道數
+      copyTo: 將複製到
+      otherStations: 個其他站點
+      copyWarning: ⚠️ 此操作將覆蓋其他站點的現有配置
+    message:
+      generateSuccess: 成功生成 {count} 條 SVID 配置
+      copySuccess: 配置已複製到所有 {count} 個站點
+      importSuccess: Station {station} 成功導入 {count} 條配置
+      emptyChannels: 其中 {count} 個通道的 SVID 值為空，已設置為 "NA"
+      clearSuccess: 已清空 Station {station} 的配置
+      downloadSuccess: Station {station} 模板文件下載成功
+      importError: 導入失敗
+      noChannels: Station {station} 沒有配置 SVID
+      minChannels: 至少需要保留 {count} 個通道配置
+
+  # SVID 數據查看
+  svidViewer:
+    title: SVID 數據查看
+    totalStations: 總站點數
+    currentStationCount: 當前站點 SVID 數
+    selectStation: 選擇站點
+    queryBtn: 查詢數據
+    waitBtn: 等待 {time}s
+    table:
+      index: '#'
+      channel: 通道
+      svid: SVID
+      status: 狀態
+      value: 數據值
+      updateTime: 更新時間
+      statusNormal: 正常
+      statusError: 失敗
+      statusLoading: 未查詢
+      noData: 暫無數據
+    message:
+      querySuccess: Station {station} 數據查詢成功
+      queryError: 數據查詢失敗
+      wait: 請等待 {time} 秒後再查詢
+      noConfig: Station {station} 沒有配置 SVID 列表
+    tips:
+      title: 提示：
+      currentView: 當前查看 Station {current}/{total} 的數據
+      totalCount: 本站點共有 {count} 個 SVID
+      rateLimit: 限制每 5 秒只能查詢一次，避免頻繁查詢
+      switchStation: 切換站點會重新初始化數據，需要重新查詢
+      naSkip: SVID 值為 "NA" 的通道不會查詢數據
+
+  # 傳感器類型管理
+  sensorType:
+    title: 傳感器類型列表
+    search:
+      sensorType: 傳感器類型
+      searchBtn: 搜尋
+      resetBtn: 重置
+    table:
+      sensorType: 傳感器類型
+      sensorDesc: 傳感器描述
+      sensorConfigs: 傳感器配置
+      createTime: 創建時間
+      updateTime: 更新時間
+      operation: 操作
+    button:
+      add: 新增類型
+      view: 查看配置
+      edit: 修改
+      delete: 刪除
+    dialog:
+      addTitle: 新增傳感器類型
+      editTitle: 修改傳感器類型
+      viewTitle: 查看傳感器配置
+    form:
+      sensorType: 傳感器類型
+      sensorDesc: 傳感器描述
+      sensorConfigs: 傳感器配置
+      placeholder:
+        sensorType: 請輸入傳感器類型（如：Temperature）
+        sensorDesc: 請輸入傳感器描述（如：溫度傳感器）
+        sensorConfigs: |
+          請輸入 INI 格式配置
+          例如：
+          unit=℃
+          protocol=Modbus RTU
+          min=-40
+          max=125
+      actions:
+        insertExample: 插入示例模板
+        validate: 驗證格式
+      tips:
+        title: 提示：
+        format: 使用 key=value 格式定義配置項
+        comment: 支持註釋（以 ; 或 # 開頭的行）
+        oneLine: 每行一個配置項
+    message:
+      addSuccess: 新增傳感器類型 {type} 成功
+      editSuccess: 修改傳感器類型 {type} 成功
+      deleteSuccess: 已刪除傳感器類型 {type}
+      deleteConfirm: 確認刪除傳感器類型 "{type}" 嗎？
+      validateSuccess: 配置格式驗證通過
+      validateError: 配置格式錯誤
+
+  # 配置標籤映射
+  configLabels:
+    unit: 單位
+    min: 最小值
+    max: 最大值
+    accuracy: 精度
+    protocol: 通訊協議
+    baudRate: 波特率
+    dataBits: 數據位
+    stopBits: 停止位
+    parity: 校驗位
+    address: 設備地址
+    timeout: 超時時間
+    interval: 採集間隔
+    host: 主機地址
+    port: 端口號
+    ip: IP地址
+    sensorModel: 傳感器型號
+    manufacturer: 製造商
+    calibrationDate: 校準日期
+    enable: 啟用狀態
+    description: 描述
+
+# 通用
+common:
+  confirm: 確定
+  cancel: 取消
+  save: 保存
+  edit: 編輯
+  delete: 刪除
+  add: 新增
+  search: 搜尋
+  reset: 重置
+  view: 查看
+  close: 關閉
+  loading: 加載中...
+  yes: 是
+  no: 否
+  success: 成功
+  error: 錯誤
+  warning: 警告
+  info: 信息
+  sensor: 傳感器
+  type: 類型

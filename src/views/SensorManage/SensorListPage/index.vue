@@ -4,6 +4,7 @@ import { ref, onMounted } from "vue";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { getSensorTypeList, type SensorTypeResult } from "@/api/sensor";
+import { useI18n } from "vue-i18n";
 
 import Delete from "~icons/ep/delete";
 import EditPen from "~icons/ep/edit-pen";
@@ -15,6 +16,7 @@ defineOptions({
   name: "SensorManage"
 });
 
+const { t, locale } = useI18n();
 const formRef = ref();
 const tableRef = ref();
 const sensorTypeList = ref<SensorTypeResult[]>([]);
@@ -26,14 +28,15 @@ const {
   columns,
   dataList,
   pagination,
+  tableKey, // 添加 tableKey
   onSearch,
   resetForm,
   openDialog,
   handleDelete,
-  handleViewSvidData,
   handleSizeChange,
   handleCurrentChange,
-  handleSelectionChange
+  handleSelectionChange,
+  handleViewSvidData
 } = useSensor();
 
 // 获取传感器类型列表
@@ -44,7 +47,6 @@ const loadSensorTypes = async () => {
     sensorTypeList.value = data || [];
   } catch (error) {
     console.error("获取传感器类型失败:", error);
-    // 使用默认数据
     sensorTypeList.value = [
       { SensorType: "Temperature", SensorDesc: "温度传感器" },
       { SensorType: "Humidity", SensorDesc: "湿度传感器" },
@@ -68,18 +70,24 @@ onMounted(() => {
       :model="form"
       class="search-form bg-bg_color w-full pl-8 pt-[12px] overflow-auto"
     >
-      <el-form-item label="传感器名称：" prop="SensorName">
+      <el-form-item
+        :label="t('sensorManage.sensorList.search.sensorName') + '：'"
+        prop="SensorName"
+      >
         <el-input
           v-model="form.SensorName"
-          placeholder="请输入传感器名称"
+          :placeholder="t('sensorManage.sensorList.search.sensorName')"
           clearable
           class="w-[180px]!"
         />
       </el-form-item>
-      <el-form-item label="传感器类型：" prop="SensorType">
+      <el-form-item
+        :label="t('sensorManage.sensorList.search.sensorType') + '：'"
+        prop="SensorType"
+      >
         <el-select
           v-model="form.SensorType"
-          placeholder="请选择传感器类型"
+          :placeholder="t('sensorManage.sensorList.search.sensorType')"
           clearable
           class="w-[180px]!"
           :loading="sensorTypeLoading"
@@ -92,15 +100,24 @@ onMounted(() => {
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="状态：" prop="Enable">
+      <el-form-item
+        :label="t('sensorManage.sensorList.search.enable') + '：'"
+        prop="Enable"
+      >
         <el-select
           v-model="form.Enable"
-          placeholder="请选择状态"
+          :placeholder="t('sensorManage.sensorList.search.enable')"
           clearable
           class="w-[180px]!"
         >
-          <el-option label="已启用" value="true" />
-          <el-option label="已停用" value="false" />
+          <el-option
+            :label="t('sensorManage.sensorList.search.enabled')"
+            :value="true"
+          />
+          <el-option
+            :label="t('sensorManage.sensorList.search.disabled')"
+            :value="false"
+          />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -110,22 +127,27 @@ onMounted(() => {
           :loading="loading"
           @click="onSearch"
         >
-          搜索
+          {{ t("sensorManage.sensorList.search.searchBtn") }}
         </el-button>
         <el-button :icon="useRenderIcon(Refresh)" @click="resetForm(formRef)">
-          重置
+          {{ t("sensorManage.sensorList.search.resetBtn") }}
         </el-button>
       </el-form-item>
     </el-form>
 
-    <PureTableBar title="传感器列表" :columns="columns" @refresh="onSearch">
+    <PureTableBar
+      :key="`sensor-list-${tableKey}`"
+      :title="t('sensorManage.sensorList.title')"
+      :columns="columns"
+      @refresh="onSearch"
+    >
       <template #buttons>
         <el-button
           type="primary"
           :icon="useRenderIcon(AddFill)"
           @click="openDialog()"
         >
-          新增传感器
+          {{ t("sensorManage.sensorList.button.add") }}
         </el-button>
       </template>
       <template v-slot="{ size, dynamicColumns }">
@@ -158,7 +180,7 @@ onMounted(() => {
               :icon="useRenderIcon(View)"
               @click="handleViewSvidData(row)"
             >
-              查看
+              {{ t("sensorManage.sensorList.button.view") }}
             </el-button>
             <el-button
               class="reset-margin"
@@ -168,10 +190,16 @@ onMounted(() => {
               :icon="useRenderIcon(EditPen)"
               @click="openDialog('修改', row)"
             >
-              修改
+              {{ t("sensorManage.sensorList.button.edit") }}
             </el-button>
             <el-popconfirm
-              :title="`是否确认删除传感器${row.SensorName}？`"
+              :title="
+                t('common.confirm') +
+                t('sensorManage.sensorList.button.delete') +
+                t('common.sensor') +
+                row.SensorName +
+                '？'
+              "
               @confirm="handleDelete(row)"
             >
               <template #reference>
@@ -182,7 +210,7 @@ onMounted(() => {
                   :size="size"
                   :icon="useRenderIcon(Delete)"
                 >
-                  删除
+                  {{ t("sensorManage.sensorList.button.delete") }}
                 </el-button>
               </template>
             </el-popconfirm>

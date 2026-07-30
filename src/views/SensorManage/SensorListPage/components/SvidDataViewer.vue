@@ -2,6 +2,9 @@
 import { ref, computed, watch, onBeforeUnmount } from "vue";
 import { ElMessage } from "element-plus";
 import { Refresh } from "@element-plus/icons-vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 interface SvidItem {
   channel: string;
@@ -126,14 +129,19 @@ const startCountdown = () => {
 
 // 查询 SVID 数据
 const querySvidData = async () => {
-  // 检查是否可以查询
   if (!canQueryNow.value) {
-    ElMessage.warning(`请等待 ${remainingTime.value} 秒后再查询`);
+    ElMessage.warning(
+      t("sensorManage.svidViewer.message.wait", { time: remainingTime.value })
+    );
     return;
   }
 
   if (currentStationSvidList.value.length === 0) {
-    ElMessage.warning(`Station ${currentStation.value} 没有配置 SVID`);
+    ElMessage.warning(
+      t("sensorManage.svidViewer.message.noConfig", {
+        station: currentStation.value
+      })
+    );
     return;
   }
 
@@ -169,10 +177,18 @@ const querySvidData = async () => {
       };
     });
 
-    ElMessage.success(`Station ${currentStation.value} 数据查询成功`);
+    ElMessage.success(
+      t("sensorManage.svidViewer.message.querySuccess", {
+        station: currentStation.value
+      })
+    );
   } catch (error) {
     console.error("查询失败:", error);
-    ElMessage.error("数据查询失败：" + (error as Error).message);
+    ElMessage.error(
+      t("sensorManage.svidViewer.message.queryError") +
+        "：" +
+        (error as Error).message
+    );
     svidDataList.value = svidDataList.value.map(item => ({
       ...item,
       status: "error",
@@ -217,18 +233,22 @@ defineExpose({ cleanup });
   <div class="svid-data-viewer">
     <div class="viewer-header">
       <div class="header-left">
-        <h3>{{ sensorName }} - SVID 数据</h3>
+        <h3>{{ sensorName }} - {{ t("sensorManage.svidViewer.title") }}</h3>
         <div class="station-info">
-          <el-tag type="primary">总站点数: {{ stationNo }}</el-tag>
+          <el-tag type="primary"
+            >{{ t("sensorManage.svidViewer.totalStations") }}:
+            {{ stationNo }}</el-tag
+          >
           <el-tag type="info" class="ml-2">
-            当前站点 SVID 数: {{ currentStationSvidList.length }}
+            {{ t("sensorManage.svidViewer.currentStationCount") }}:
+            {{ currentStationSvidList.length }}
           </el-tag>
         </div>
       </div>
       <div class="header-right">
         <el-select
           v-model="currentStation"
-          placeholder="选择站点"
+          :placeholder="t('sensorManage.svidViewer.selectStation')"
           style="width: 150px; margin-right: 12px"
         >
           <el-option
@@ -245,7 +265,11 @@ defineExpose({ cleanup });
           :disabled="!canQueryNow"
           @click="querySvidData"
         >
-          {{ canQueryNow ? "查询数据" : `等待 ${remainingTime}s` }}
+          {{
+            canQueryNow
+              ? t("sensorManage.svidViewer.queryBtn")
+              : t("sensorManage.svidViewer.waitBtn", { time: remainingTime })
+          }}
         </el-button>
       </div>
     </div>
@@ -256,38 +280,65 @@ defineExpose({ cleanup });
       :closable="false"
       show-icon
     >
-      Station {{ currentStation }} 没有配置 SVID 列表
+      {{
+        t("sensorManage.svidViewer.message.noConfig", {
+          station: currentStation
+        })
+      }}
     </el-alert>
 
     <div v-else class="data-list">
       <el-table :data="svidDataList" border stripe>
-        <el-table-column type="index" label="#" width="60" align="center" />
-        <el-table-column prop="channel" label="通道" width="150">
+        <el-table-column
+          type="index"
+          :label="t('sensorManage.svidViewer.table.index')"
+          width="60"
+          align="center"
+        />
+        <el-table-column
+          prop="channel"
+          :label="t('sensorManage.svidViewer.table.channel')"
+          width="150"
+        >
           <template #default="{ row }">
             <el-tag size="small" type="info">{{ row.channel }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="svid" label="SVID" width="180">
+        <el-table-column
+          prop="svid"
+          :label="t('sensorManage.svidViewer.table.svid')"
+          width="180"
+        >
           <template #default="{ row }">
             <span class="font-mono text-sm">{{ row.svid }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="状态" width="100" align="center">
+        <el-table-column
+          :label="t('sensorManage.svidViewer.table.status')"
+          width="100"
+          align="center"
+        >
           <template #default="{ row }">
             <el-tag v-if="row.status === 'success'" type="success" size="small">
-              正常
+              {{ t("sensorManage.svidViewer.table.statusNormal") }}
             </el-tag>
             <el-tag
               v-else-if="row.status === 'error'"
               type="danger"
               size="small"
             >
-              失败
+              {{ t("sensorManage.svidViewer.table.statusError") }}
             </el-tag>
-            <el-tag v-else type="info" size="small">未查询</el-tag>
+            <el-tag v-else type="info" size="small">{{
+              t("sensorManage.svidViewer.table.statusLoading")
+            }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="数据值" min-width="150" align="center">
+        <el-table-column
+          :label="t('sensorManage.svidViewer.table.value')"
+          min-width="150"
+          align="center"
+        >
           <template #default="{ row }">
             <div
               v-if="row.status === 'success' && row.value"
@@ -298,12 +349,20 @@ defineExpose({ cleanup });
               </el-tag>
             </div>
             <span v-else-if="row.status === 'error'" class="error-message">
-              {{ row.message || "数据获取失败" }}
+              {{
+                row.message || t("sensorManage.svidViewer.table.statusError")
+              }}
             </span>
-            <span v-else class="text-gray-400">暂无数据</span>
+            <span v-else class="text-gray-400">{{
+              t("sensorManage.svidViewer.table.noData")
+            }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="timestamp" label="更新时间" width="180" />
+        <el-table-column
+          prop="timestamp"
+          :label="t('sensorManage.svidViewer.table.updateTime')"
+          width="180"
+        />
       </el-table>
     </div>
 
@@ -311,26 +370,29 @@ defineExpose({ cleanup });
       <template #title>
         <div class="text-xs">
           <p class="mb-1">
-            <strong>提示：</strong>
+            <strong>{{ t("sensorManage.svidViewer.tips.title") }}</strong>
           </p>
           <ul class="pl-4 space-y-1">
             <li>
-              • 当前查看
-              <strong class="text-primary"
-                >Station {{ currentStation }}/{{ stationNo }}</strong
-              >
-              的数据
+              •
+              {{
+                t("sensorManage.svidViewer.tips.currentView", {
+                  current: currentStation,
+                  total: stationNo
+                })
+              }}
             </li>
             <li>
-              • 本站点共有
-              <strong class="text-success">{{
-                currentStationSvidList.length
-              }}</strong>
-              个 SVID
+              •
+              {{
+                t("sensorManage.svidViewer.tips.totalCount", {
+                  count: currentStationSvidList.length
+                })
+              }}
             </li>
-            <li>• 限制每 5 秒只能查询一次，避免频繁查询</li>
-            <li>• 切换站点会重新初始化数据，需要重新查询</li>
-            <li>• SVID 值为 "NA" 的通道不会查询数据</li>
+            <li>• {{ t("sensorManage.svidViewer.tips.rateLimit") }}</li>
+            <li>• {{ t("sensorManage.svidViewer.tips.switchStation") }}</li>
+            <li>• {{ t("sensorManage.svidViewer.tips.naSkip") }}</li>
           </ul>
         </div>
       </template>
